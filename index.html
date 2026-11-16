@@ -1,0 +1,3833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Protocolo QKD BB84 — Demostración Interactiva 3D (SOCHIFI)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* PALETA EDITORIAL LIQUID GLASS */
+    :root {
+      --paper: #F4F2ED;
+      --sheet: #FFFFFF;
+      --stone: #E8E4DC;
+      --ink: #1F2421;
+      --muted: #5A635E;
+      --border: #D6D1C7;
+      --olive: #2E6F56;
+      --olive-hover: #245944;
+      --terracotta: #B85A43;
+      --ochre: #9E6B2B;
+      --slate-blue: #2D6480;
+      --sage-wash: #DCECE4;
+      --sky-wash: #DCEAF2;
+      --cream-wash: #F3E8D2;
+      --rose-wash: #F3DFDA;
+      --lilac-wash: #E6E8EE;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      font-family: var(--font-sans);
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(220, 234, 242, 0.85) 0%, transparent 48%),
+        radial-gradient(circle at 88% 82%, rgba(220, 236, 228, 0.85) 0%, transparent 48%),
+        linear-gradient(145deg, #F7F5F0 0%, #ECE9E1 100%);
+      font-size: 13px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--slate-blue);
+      outline-offset: 2px;
+    }
+
+    .icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .icon-sm {
+      width: 13px;
+      height: 13px;
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px;
+      height: 100vh;
+      height: 100dvh;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    /* Liquid Glass Topbar */
+    .liquid-glass-bar {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(248, 246, 241, 0.80) 100%);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 6px 24px -4px rgba(31, 36, 33, 0.06), inset 0 1.5px 1px rgba(255, 255, 255, 1);
+      border-radius: 26px;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 12px;
+      padding: 9px 14px;
+      z-index: 20;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #F7F5F0;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 6px rgba(31, 36, 33, 0.14);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+
+    .topbar-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .glass-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.80);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 6px rgba(31, 36, 33, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
+      border-radius: 999px;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .glass-pill:hover {
+      background: rgba(255, 255, 255, 0.98);
+      transform: translateY(-0.5px);
+      box-shadow: 0 4px 10px rgba(31, 36, 33, 0.07), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .glass-pill:active {
+      transform: translateY(0.5px);
+    }
+
+    .glass-pill.pill-sm {
+      padding: 5px 10px;
+      font-size: 11.5px;
+    }
+
+    .glass-pill[aria-pressed="true"] {
+      background: linear-gradient(180deg, #E8F2EE 0%, #DCECE4 100%);
+      border-color: rgba(46, 111, 86, 0.45);
+      color: var(--olive);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 2px 8px rgba(46, 111, 86, 0.10);
+    }
+
+    /* Workspace Row */
+    .workspace {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      gap: 12px;
+      transition: gap 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .workspace.workspace-collapsed {
+      gap: 0;
+    }
+
+    /* Collapsible Control Sidebar */
+    .liquid-glass-sidebar {
+      background: linear-gradient(180deg, rgba(250, 249, 246, 0.84) 0%, rgba(243, 240, 234, 0.78) 100%);
+      backdrop-filter: blur(24px) saturate(145%);
+      -webkit-backdrop-filter: blur(24px) saturate(145%);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 28px -6px rgba(31, 36, 33, 0.07), inset 0 1.5px 1px rgba(255, 255, 255, 1);
+      border-radius: 28px;
+      width: 328px;
+      flex-shrink: 0;
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      transform-origin: left center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(90, 99, 94, 0.3) transparent;
+      z-index: 15;
+      min-height: 0;
+      transition: width 0.42s cubic-bezier(0.22, 1, 0.36, 1), padding 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.32s ease, box-shadow 0.32s ease;
+    }
+
+    .liquid-glass-sidebar .sidebar-inner {
+      min-width: 298px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: opacity 0.26s ease, transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .liquid-glass-sidebar.sidebar-collapsed {
+      width: 0px !important;
+      padding-left: 0px !important;
+      padding-right: 0px !important;
+      opacity: 0;
+      transform: translateX(-16px) scale(0.97);
+      border-color: transparent;
+      box-shadow: none;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .liquid-glass-sidebar.sidebar-collapsed .sidebar-inner {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+
+    /* Editorial Cards & Pastel Glass Tints */
+    .editorial-card {
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(250, 249, 246, 0.82) 100%);
+      backdrop-filter: blur(18px) saturate(135%);
+      -webkit-backdrop-filter: blur(18px) saturate(135%);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 22px;
+      box-shadow: 0 6px 20px -6px rgba(31, 36, 33, 0.06), 0 1px 2px rgba(31, 36, 33, 0.04), inset 0 1.5px 1px rgba(255, 255, 255, 1);
+      padding: 12px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      position: relative;
+    }
+
+    .glass-tint-sky { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(220, 234, 242, 0.78) 100%); }
+    .glass-tint-sage { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(220, 236, 228, 0.78) 100%); }
+    .glass-tint-cream { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(243, 232, 210, 0.78) 100%); }
+    .glass-tint-rose { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(243, 223, 218, 0.78) 100%); }
+    .glass-tint-lilac { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(230, 232, 242, 0.78) 100%); }
+
+    .viewpoint-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .viewpoint-btn {
+      min-height: 38px;
+      width: 100%;
+      border-radius: 14px;
+      font-size: 11.5px;
+    }
+
+    .glass-subcard {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 2px 6px rgba(31, 36, 33, 0.03);
+      border-radius: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink);
+    }
+
+    .editorial-card h2 {
+      margin: 0;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .badge-mono {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+      padding: 3px 9px;
+      cursor: default;
+    }
+
+    .badge-mono:hover {
+      transform: none;
+    }
+
+    .helper-copy {
+      margin: 0;
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.38;
+    }
+
+    /* Alice & Bob Synchronized Touch Buttons (>= 48px) */
+    .demo-btn-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .demo-sync-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 2px;
+      min-height: 48px;
+      padding: 8px 11px;
+      color: var(--ink);
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, transform 90ms ease;
+    }
+
+    .demo-sync-btn:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .demo-sync-btn:active {
+      transform: translateY(0.5px);
+    }
+
+    .demo-sync-btn strong {
+      font-size: 12.5px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .demo-sync-btn span {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+
+    .demo-sync-btn.active {
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.96) 0%, rgba(214, 232, 243, 0.92) 100%);
+      border-color: var(--slate-blue);
+      color: #1A4357;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 3px 10px rgba(45, 100, 128, 0.16);
+    }
+
+    .demo-sync-btn.active span {
+      color: var(--slate-blue);
+      font-weight: 600;
+    }
+
+    .demo-sync-btn.active.is-bob {
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.96) 0%, rgba(213, 234, 223, 0.92) 100%);
+      border-color: var(--olive);
+      color: #1B4635;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 3px 10px rgba(46, 111, 86, 0.16);
+    }
+
+    .demo-sync-btn.active.is-bob span {
+      color: var(--olive);
+      font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 13px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(31, 36, 33, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+      transition: background 140ms ease, border-color 140ms ease, transform 90ms ease, box-shadow 140ms ease;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.98);
+      transform: translateY(-0.5px);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #357E62 0%, var(--olive) 100%);
+      border-color: rgba(36, 89, 68, 0.65);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(46, 111, 86, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(180deg, #2E6F56 0%, var(--olive-hover) 100%);
+    }
+
+    .btn-subtle {
+      background: rgba(244, 242, 237, 0.82);
+      color: var(--muted);
+    }
+
+    .btn-auto.is-running {
+      background: linear-gradient(180deg, #C76850 0%, var(--terracotta) 100%);
+      border-color: rgba(150, 68, 48, 0.6);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(184, 90, 67, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .actions-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .actions-primary {
+      width: 100%;
+      min-height: 48px;
+      font-size: 13px;
+    }
+
+    .actions-secondary {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 7px;
+    }
+
+    .actions-secondary .btn {
+      min-height: 44px;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Live Result Card & LEDs */
+    .result-phase {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .result-phase.moving {
+      background: rgba(243, 232, 210, 0.95);
+      color: var(--ochre);
+      border-color: rgba(158, 107, 43, 0.45);
+    }
+
+    .result-phase.det {
+      background: rgba(220, 236, 228, 0.95);
+      color: var(--olive);
+      border-color: rgba(46, 111, 86, 0.45);
+    }
+
+    .result-phase.split {
+      background: rgba(243, 223, 218, 0.95);
+      color: var(--terracotta);
+      border-color: rgba(184, 90, 67, 0.45);
+    }
+
+    .result-explanation {
+      margin: 0;
+      font-size: 12px;
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .result-bit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .result-bit-pill {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11.5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border);
+    }
+
+    .result-bit-pill.is-kept {
+      background: rgba(220, 236, 228, 0.95);
+      border-color: var(--olive);
+      color: #1B4635;
+    }
+
+    .result-bit-pill.is-discarded {
+      background: rgba(243, 223, 218, 0.95);
+      border-color: var(--terracotta);
+      color: #7A3222;
+    }
+
+    .led-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .led-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 9px;
+      transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .led-bulb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: #334139;
+      border: 2px solid #94A39B;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+      transition: background 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+    }
+
+    .led-pill.is-lit {
+      background: rgba(236, 253, 243, 0.95);
+      border-color: #16A34A;
+      box-shadow: 0 2px 10px rgba(22, 163, 74, 0.18);
+    }
+
+    .led-pill.is-lit .led-bulb {
+      background: #22FF00;
+      border-color: #15803D;
+      box-shadow: 0 0 12px rgba(34, 255, 0, 0.85), inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .led-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .led-text strong {
+      font-size: 11px;
+      line-height: 1.25;
+      color: var(--ink);
+    }
+
+    .led-text small {
+      font-size: 10.5px;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+
+    .led-pill.is-lit .led-text small {
+      color: #15803D;
+      font-weight: 700;
+    }
+
+    .physics-readout {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 7px 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      color: var(--ink);
+    }
+
+    /* Tabla 1: Reconciliación BB84 */
+    .sifted-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 10px;
+      font-size: 11.5px;
+      color: var(--ink);
+    }
+
+    .sifted-badge code {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--olive);
+      letter-spacing: 0.08em;
+      word-break: break-all;
+    }
+
+    .recon-table-wrap {
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 210px;
+      max-width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(214, 209, 199, 0.9);
+      background: rgba(255, 255, 255, 0.85);
+      scrollbar-width: thin;
+    }
+
+    .recon-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .recon-table th,
+    .recon-table td {
+      border-bottom: 1px solid rgba(214, 209, 199, 0.65);
+      border-right: 1px solid rgba(214, 209, 199, 0.55);
+      padding: 6px 4px;
+      white-space: nowrap;
+    }
+
+    .recon-table th:last-child,
+    .recon-table td:last-child {
+      border-right: 0;
+    }
+
+    .recon-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .recon-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #EAD8F8;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .recon-table tr.is-match {
+      background: rgba(220, 236, 228, 0.45);
+    }
+
+    .recon-table tr.is-miss {
+      background: rgba(250, 249, 246, 0.75);
+      color: var(--muted);
+    }
+
+    .recon-empty td {
+      padding: 12px 8px;
+      color: var(--muted);
+      white-space: normal;
+      font-style: italic;
+    }
+
+    /* 3D Liquid Glass Viewport */
+    .liquid-glass-viewport {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(252, 251, 248, 0.58) 0%, rgba(244, 240, 232, 0.45) 100%);
+      backdrop-filter: blur(14px) saturate(130%);
+      -webkit-backdrop-filter: blur(14px) saturate(130%);
+      border: 1.5px solid rgba(255, 255, 255, 0.92);
+      border-radius: 28px;
+      box-shadow: 0 12px 32px -8px rgba(31, 36, 33, 0.08), inset 0 2px 2px rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(213, 206, 192, 0.4);
+    }
+
+    .liquid-glass-viewport::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 6;
+      box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.65), inset 0 -2px 4px rgba(31, 36, 33, 0.05);
+    }
+
+    #gl-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    #gl-canvas:active {
+      cursor: grabbing;
+    }
+
+    #paper-grain-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      opacity: 0;
+      z-index: 2;
+    }
+
+    #label-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .demo-hud-banner {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: min(680px, calc(100% - 24px));
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.96);
+      box-shadow: 0 4px 16px rgba(31, 36, 33, 0.09), inset 0 1px 0 rgba(255, 255, 255, 1);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+      z-index: 12;
+    }
+
+    .demo-hud-banner[hidden] {
+      display: none;
+    }
+
+    .demo-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: #9CA3AF;
+    }
+
+    .demo-dot.moving {
+      background: var(--ochre);
+      box-shadow: 0 0 0 3px rgba(158, 107, 43, 0.24);
+    }
+
+    .demo-dot.det {
+      background: #16A34A;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.75);
+    }
+
+    .demo-dot.split {
+      background: var(--terracotta);
+      box-shadow: 0 0 7px rgba(184, 90, 67, 0.5);
+    }
+
+    .hud-pill {
+      position: absolute;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 11px;
+      color: var(--muted);
+      box-shadow: 0 2px 10px rgba(31, 36, 33, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+      pointer-events: none;
+    }
+
+    .hud-bottom-left {
+      left: 12px;
+      bottom: 12px;
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hud-status {
+      right: 12px;
+      bottom: 12px;
+      max-width: 330px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .error-banner {
+      position: absolute;
+      inset: 20px;
+      z-index: 50;
+      background: #FFF5F5;
+      border: 2px solid var(--terracotta);
+      border-radius: 18px;
+      padding: 18px;
+      color: #8B2B1A;
+      display: none;
+    }
+
+    /* Responsive Phone & Portrait Layout (390px+) */
+    @media (max-width: 820px) {
+      .app-shell {
+        padding: 8px;
+        gap: 8px;
+        height: 100vh;
+        height: 100dvh;
+      }
+
+      .liquid-glass-bar {
+        border-radius: 20px;
+      }
+
+      .topbar {
+        padding: 7px 10px;
+        gap: 6px;
+      }
+
+      .brand {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .brand h1 {
+        font-size: 12.5px;
+        line-height: 1.2;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .topbar-controls {
+        width: 100%;
+        gap: 5px;
+      }
+
+      .toolbar-group {
+        gap: 4px;
+      }
+
+      .glass-pill.pill-sm {
+        padding: 5px 9px;
+        font-size: 11px;
+      }
+
+      .workspace {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .workspace.workspace-collapsed {
+        gap: 0;
+      }
+
+      .liquid-glass-viewport {
+        order: 1;
+        flex: 0 0 44dvh;
+        height: 44dvh;
+        min-height: 210px;
+        border-radius: 22px;
+      }
+
+      .workspace.workspace-collapsed .liquid-glass-viewport {
+        flex: 1 1 auto;
+        height: auto;
+      }
+
+      .liquid-glass-sidebar {
+        order: 2;
+        width: 100% !important;
+        flex: 1 1 auto;
+        min-height: 0;
+        border-radius: 22px;
+        padding: 10px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .liquid-glass-sidebar .sidebar-inner {
+        min-width: 0;
+        width: 100%;
+        gap: 9px;
+      }
+
+      .liquid-glass-sidebar.sidebar-collapsed {
+        flex: 0 0 0px !important;
+        height: 0px !important;
+        min-height: 0px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-width: 0 !important;
+        transform: translateY(12px);
+      }
+
+      .editorial-card {
+        border-radius: 18px;
+        padding: 10px 11px;
+      }
+
+      .demo-hud-banner {
+        top: 8px;
+        max-width: calc(100% - 14px);
+        padding: 5px 10px;
+        font-size: 11px;
+        border-radius: 14px;
+      }
+
+      .hud-bottom-left {
+        left: 8px;
+        bottom: 8px;
+        padding: 4px 9px;
+        font-size: 10px;
+      }
+
+      .hud-status {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app-shell" class="app-shell">
+    <header class="topbar liquid-glass-bar">
+      <div class="brand">
+        <button id="btn-toggle-panel" class="glass-pill pill-sm" type="button" aria-expanded="false" aria-controls="control-panel" title="Mostrar u ocultar panel de controles">
+          <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          <span>Panel</span>
+        </button>
+        <span class="brand-badge">QKD BB84</span>
+        <h1>QKD BB84 · Demostración Interactiva 3D</h1>
+      </div>
+
+      <div class="topbar-controls">
+        <div class="toolbar-group" role="group" aria-label="Herramientas de vista">
+          <button id="btn-restaurar-vista" class="glass-pill pill-sm" type="button" title="Restaurar vista general 3D por defecto">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            <span>Restaurar Vista</span>
+          </button>
+          <button id="btn-labels-toggle" class="glass-pill pill-sm" type="button" aria-pressed="false" title="Mostrar u ocultar etiquetas de componentes">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <span>Etiquetas</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="workspace workspace-collapsed" id="workspace">
+      <aside class="control-panel liquid-glass-sidebar sidebar-collapsed" id="control-panel" aria-label="Controles interactivos y resultados BB84">
+        <div class="sidebar-inner">
+          <section class="editorial-card glass-tint-sky">
+            <div class="section-head">
+              <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+                <h2>Módulo Alice (Emisor)</h2>
+              </div>
+              <span id="demo-alice-badge" class="badge-mono glass-pill">0° • Base + • Bit 0</span>
+            </div>
+            <p class="helper-copy">Elige la polarización del fotón o toca directamente los 4 botones físicos sobre la caja 3D de Alice.</p>
+            <div class="demo-btn-grid">
+              <button type="button" class="demo-sync-btn glass-subcard active" data-demo-alice="0">
+                <strong>B1: 0°</strong>
+                <span>Base + • Bit 0</span>
+              </button>
+              <button type="button" class="demo-sync-btn glass-subcard" data-demo-alice="1">
+                <strong>B2: 90°</strong>
+                <span>Base + • Bit 1</span>
+              </button>
+              <button type="button" class="demo-sync-btn glass-subcard" data-demo-alice="2">
+                <strong>B3: -45°</strong>
+                <span>Base × • Bit 0</span>
+              </button>
+              <button type="button" class="demo-sync-btn glass-subcard" data-demo-alice="3">
+                <strong>B4: +45°</strong>
+                <span>Base × • Bit 1</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="editorial-card glass-tint-sage">
+            <div class="section-head">
+              <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+                <h2>Módulo Bob (Receptor)</h2>
+              </div>
+              <span id="demo-bob-badge" class="badge-mono glass-pill">Base + (0°)</span>
+            </div>
+            <p class="helper-copy">Selecciona la base de análisis o toca los 2 botones sobre la caja 3D de Bob.</p>
+            <div class="demo-btn-grid">
+              <button type="button" class="demo-sync-btn glass-subcard is-bob active" data-demo-bob="0">
+                <strong>Base + (0°)</strong>
+                <span>Medida rectilínea</span>
+              </button>
+              <button type="button" class="demo-sync-btn glass-subcard is-bob" data-demo-bob="1">
+                <strong>Base × (+45°)</strong>
+                <span>Medida diagonal</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="editorial-card glass-tint-cream">
+            <div class="section-head">
+              <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <h2>Acciones del Experimento</h2>
+              </div>
+            </div>
+            <div class="actions-stack">
+              <button id="btn-demo-pulse" class="btn btn-primary actions-primary" type="button">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Disparar Pulso 650 nm</span>
+              </button>
+              <div class="actions-secondary">
+                <button id="btn-demo-auto" class="btn btn-auto" type="button" aria-pressed="false">
+                  <svg id="btn-demo-auto-icon" class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span id="btn-demo-auto-label">Demo Automática</span>
+                </button>
+                <button id="btn-recon-clear" class="btn btn-subtle" type="button">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6m4-6v6"/></svg>
+                  <span>Limpiar</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="editorial-card glass-tint-rose result-card" aria-live="polite">
+            <div class="section-head">
+              <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <h2>Resultado en Vivo &amp; Detectores</h2>
+              </div>
+              <span id="result-angle-badge" class="badge-mono glass-pill">Δθ = 0°</span>
+            </div>
+
+            <div id="result-phase" class="result-phase det">Bases Coinciden (+)</div>
+            <p id="result-explanation" class="result-explanation">
+              Alice (Base +, 0°) y Bob (Base +, 0°) usan la misma base: todo el haz llega al Detector 1 (LED verde) y el bit se conserva.
+            </p>
+
+            <div class="result-bit-row glass-subcard">
+              <span>Bit resultante:</span>
+              <span id="result-bit-pill" class="result-bit-pill is-kept">0 (Conservado en clave)</span>
+            </div>
+
+            <div class="led-grid">
+              <div class="led-pill glass-subcard is-lit" id="led-det1">
+                <span class="led-bulb" aria-hidden="true"></span>
+                <div class="led-text">
+                  <strong>Detector 1 (0° Transmitido)</strong>
+                  <small id="led-det1-sub">LED encendido</small>
+                </div>
+              </div>
+              <div class="led-pill glass-subcard" id="led-det2">
+                <span class="led-bulb" aria-hidden="true"></span>
+                <div class="led-text">
+                  <strong>Detector 2 (90° Reflejado)</strong>
+                  <small id="led-det2-sub">Apagado</small>
+                </div>
+              </div>
+            </div>
+
+            <div id="physics-readout" class="physics-readout glass-subcard">
+              <span>Δθ = 0°</span>
+              <span>T = 100%</span>
+              <span>R = 0%</span>
+            </div>
+          </section>
+
+          <section class="editorial-card glass-tint-cream">
+            <div class="section-head">
+              <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
+                <h2>Tabla 1: Reconciliación BB84</h2>
+              </div>
+              <span id="recon-count" class="badge-mono glass-pill">0 ev.</span>
+            </div>
+
+            <div class="sifted-badge glass-subcard">
+              <span>Clave Tamizada Acumulada:</span>
+              <code id="sifted-key-value">—</code>
+            </div>
+
+            <div class="recon-table-wrap" id="recon-table-wrap">
+              <table class="recon-table" id="recon-table">
+                <thead>
+                  <tr>
+                    <th>Evento</th>
+                    <th>Base Alice</th>
+                    <th>Base Bob</th>
+                    <th>¿Coinciden?</th>
+                    <th>Clave</th>
+                  </tr>
+                </thead>
+                <tbody id="recon-tbody">
+                  <tr class="recon-empty">
+                    <td colspan="5">Pulsa un botón de Alice/Bob o «Disparar Pulso 650 nm» para registrar eventos.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="editorial-card glass-tint-lilac">
+            <div class="section-head">
+              <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <h2>Puntos de Vista</h2>
+              </div>
+              <button id="btn-ortho-toggle" class="glass-pill pill-sm" type="button" aria-pressed="true" title="Alternar proyección Ortográfica / Perspectiva">Ortográfica</button>
+            </div>
+            <div class="viewpoint-grid" role="group" aria-label="Vistas rápidas de cámara">
+              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="iso-ref" aria-pressed="true">Vista General</button>
+              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="alice" aria-pressed="false">Módulo Alice</button>
+              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="bob" aria-pressed="false">Módulo Bob</button>
+              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="top" aria-pressed="false">Planta</button>
+            </div>
+          </section>
+        </div>
+      </aside>
+
+      <main class="viewport-wrap liquid-glass-viewport" id="viewport-wrap">
+        <canvas id="gl-canvas" aria-label="Escena 3D interactiva del protocolo QKD BB84"></canvas>
+        <canvas id="paper-grain-overlay" aria-hidden="true"></canvas>
+        <svg id="label-overlay" aria-hidden="true"></svg>
+
+        <div class="demo-hud-banner" id="demo-hud-banner">
+          <span class="demo-dot det" id="demo-dot"></span>
+          <span id="demo-hud-text">Bases coinciden (+ y +) → Detector 1 (LED verde) • Bit = 0</span>
+        </div>
+
+        <div class="hud-pill hud-bottom-left">
+          <span>Toca botón 3D</span>
+          <span>•</span>
+          <span>1 dedo / arrastre: Rotar</span>
+          <span>•</span>
+          <span>2 dedos / rueda: Zoom y mover</span>
+        </div>
+
+        <div class="hud-pill hud-status" id="status-live" aria-live="polite">Cargando modelos 3D…</div>
+        <div id="error-banner" class="error-banner" role="alert"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="stl_data.js"></script>
+  <script>
+  (() => {
+    "use strict";
+
+    // =========================================================================
+    // 1. VECTOR & MATRIX MATH (Column-major 4x4 for WebGL)
+    // =========================================================================
+    const V3 = {
+      add: (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]],
+      sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]],
+      scale: (a, s) => [a[0] * s, a[1] * s, a[2] * s],
+      dot: (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2],
+      cross: (a, b) => [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0]
+      ],
+      len: (a) => Math.hypot(a[0], a[1], a[2]),
+      norm: (a) => {
+        const l = Math.hypot(a[0], a[1], a[2]) || 1;
+        return [a[0] / l, a[1] / l, a[2] / l];
+      }
+    };
+
+    const M4 = {
+      ident: () => {
+        const m = new Float32Array(16);
+        m[0] = m[5] = m[10] = m[15] = 1;
+        return m;
+      },
+      mul: (a, b) => {
+        const out = new Float32Array(16);
+        for (let col = 0; col < 4; col++) {
+          const b0 = b[col * 4], b1 = b[col * 4 + 1], b2 = b[col * 4 + 2], b3 = b[col * 4 + 3];
+          out[col * 4 + 0] = a[0] * b0 + a[4] * b1 + a[8] * b2 + a[12] * b3;
+          out[col * 4 + 1] = a[1] * b0 + a[5] * b1 + a[9] * b2 + a[13] * b3;
+          out[col * 4 + 2] = a[2] * b0 + a[6] * b1 + a[10] * b2 + a[14] * b3;
+          out[col * 4 + 3] = a[3] * b0 + a[7] * b1 + a[11] * b2 + a[15] * b3;
+        }
+        return out;
+      },
+      translate: (x, y, z) => {
+        const m = M4.ident();
+        m[12] = x; m[13] = y; m[14] = z;
+        return m;
+      },
+      rotY: (rad) => {
+        const m = M4.ident(), c = Math.cos(rad), s = Math.sin(rad);
+        m[0] = c; m[2] = -s; m[8] = s; m[10] = c;
+        return m;
+      },
+      rotZ: (rad) => {
+        const m = M4.ident(), c = Math.cos(rad), s = Math.sin(rad);
+        m[0] = c; m[1] = s; m[4] = -s; m[5] = c;
+        return m;
+      },
+      fromBasis: (ex, ey, ez, t = [0, 0, 0]) => {
+        const m = new Float32Array(16);
+        m[0] = ex[0]; m[1] = ex[1]; m[2] = ex[2];
+        m[4] = ey[0]; m[5] = ey[1]; m[6] = ey[2];
+        m[8] = ez[0]; m[9] = ez[1]; m[10] = ez[2];
+        m[12] = t[0]; m[13] = t[1]; m[14] = t[2];
+        m[15] = 1;
+        return m;
+      },
+      perspective: (fovRad, aspect, near, far) => {
+        const f = 1 / Math.tan(fovRad / 2);
+        const nf = 1 / (near - far);
+        const m = new Float32Array(16);
+        m[0] = f / aspect;
+        m[5] = f;
+        m[10] = (far + near) * nf;
+        m[11] = -1;
+        m[14] = 2 * far * near * nf;
+        return m;
+      },
+      ortho: (left, right, bottom, top, near, far) => {
+        const lr = 1 / (left - right);
+        const bt = 1 / (bottom - top);
+        const nf = 1 / (near - far);
+        const m = new Float32Array(16);
+        m[0] = -2 * lr;
+        m[5] = -2 * bt;
+        m[10] = 2 * nf;
+        m[12] = (left + right) * lr;
+        m[13] = (top + bottom) * bt;
+        m[14] = (far + near) * nf;
+        m[15] = 1;
+        return m;
+      },
+      lookAt: (eye, target, up) => {
+        const z = V3.norm(V3.sub(eye, target));
+        const x = V3.norm(V3.cross(up, z));
+        const y = V3.cross(z, x);
+        const m = new Float32Array(16);
+        m[0] = x[0]; m[1] = y[0]; m[2] = z[0];
+        m[4] = x[1]; m[5] = y[1]; m[6] = z[1];
+        m[8] = x[2]; m[9] = y[2]; m[10] = z[2];
+        m[12] = -V3.dot(x, eye);
+        m[13] = -V3.dot(y, eye);
+        m[14] = -V3.dot(z, eye);
+        m[15] = 1;
+        return m;
+      },
+      transformPoint: (m, p) => {
+        const x = p[0], y = p[1], z = p[2];
+        const w = m[3] * x + m[7] * y + m[11] * z + m[15];
+        return [
+          m[0] * x + m[4] * y + m[8] * z + m[12],
+          m[1] * x + m[5] * y + m[9] * z + m[13],
+          m[2] * x + m[6] * y + m[10] * z + m[14],
+          w
+        ];
+      },
+      normalMatrix3: (m) => {
+        const a00 = m[0], a01 = m[1], a02 = m[2];
+        const a10 = m[4], a11 = m[5], a12 = m[6];
+        const a20 = m[8], a21 = m[9], a22 = m[10];
+        const b01 = a22 * a11 - a12 * a21;
+        const b11 = -a22 * a10 + a12 * a20;
+        const b21 = a21 * a10 - a11 * a20;
+        let det = a00 * b01 + a01 * b11 + a02 * b21;
+        if (!det) return new Float32Array([1,0,0, 0,1,0, 0,0,1]);
+        det = 1 / det;
+        return new Float32Array([
+          b01 * det,
+          (-a22 * a01 + a02 * a21) * det,
+          (a12 * a01 - a02 * a11) * det,
+          b11 * det,
+          (a22 * a00 - a02 * a20) * det,
+          (-a12 * a00 + a02 * a10) * det,
+          b21 * det,
+          (-a21 * a00 + a01 * a20) * det,
+          (a11 * a00 - a01 * a10) * det
+        ]);
+      }
+    };
+
+    function hexToRgb01(hex) {
+      const h = (hex || "#cccccc").replace("#", "");
+      const num = parseInt(h.length === 3 ? h.split("").map(c => c + c).join("") : h, 16);
+      return [((num >> 16) & 255) / 255, ((num >> 8) & 255) / 255, (num & 255) / 255];
+    }
+
+    function rgb01ToHex(rgb) {
+      const toHex = (v) => Math.max(0, Math.min(255, Math.round(v * 255))).toString(16).padStart(2, "0");
+      return "#" + toHex(rgb[0]) + toHex(rgb[1]) + toHex(rgb[2]);
+    }
+
+    function mixHex(hexA, hexB, t) {
+      const a = hexToRgb01(hexA), b = hexToRgb01(hexB);
+      return rgb01ToHex([
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t,
+        a[2] + (b[2] - a[2]) * t
+      ]);
+    }
+
+    // =========================================================================
+    // 2. GEOMETRY & STL DECODER + CREASE / SILHOUETTE EXTRACTION
+    // =========================================================================
+    function buildGeometryFromTriangles(rawVerts, creaseDeg = 23, customEdges = []) {
+      const triCount = rawVerts.length / 9;
+      const positions = new Float32Array(rawVerts.length);
+      const normals = new Float32Array(rawVerts.length);
+      const triNormals = new Float32Array(triCount * 3);
+
+      const vMap = new Map();
+      let uniqueIdx = 0;
+      const qVerts = [];
+      const triVertIds = new Int32Array(triCount * 3);
+
+      function getVertId(x, y, z) {
+        const key = `${Math.round(x * 200)}|${Math.round(y * 200)}|${Math.round(z * 200)}`;
+        let id = vMap.get(key);
+        if (id === undefined) {
+          id = uniqueIdx++;
+          vMap.set(key, id);
+          qVerts.push(x, y, z);
+        }
+        return id;
+      }
+
+      for (let t = 0; t < triCount; t++) {
+        const i9 = t * 9;
+        const x0 = rawVerts[i9], y0 = rawVerts[i9 + 1], z0 = rawVerts[i9 + 2];
+        const x1 = rawVerts[i9 + 3], y1 = rawVerts[i9 + 4], z1 = rawVerts[i9 + 5];
+        const x2 = rawVerts[i9 + 6], y2 = rawVerts[i9 + 7], z2 = rawVerts[i9 + 8];
+
+        positions[i9] = x0; positions[i9 + 1] = y0; positions[i9 + 2] = z0;
+        positions[i9 + 3] = x1; positions[i9 + 4] = y1; positions[i9 + 5] = z1;
+        positions[i9 + 6] = x2; positions[i9 + 7] = y2; positions[i9 + 8] = z2;
+
+        const ax = x1 - x0, ay = y1 - y0, az = z1 - z0;
+        const bx = x2 - x0, by = y2 - y0, bz = z2 - z0;
+        let nx = ay * bz - az * by;
+        let ny = az * bx - ax * bz;
+        let nz = ax * by - ay * bx;
+        const nl = Math.hypot(nx, ny, nz) || 1;
+        nx /= nl; ny /= nl; nz /= nl;
+
+        triNormals[t * 3] = nx; triNormals[t * 3 + 1] = ny; triNormals[t * 3 + 2] = nz;
+        for (let k = 0; k < 3; k++) {
+          normals[i9 + k * 3] = nx;
+          normals[i9 + k * 3 + 1] = ny;
+          normals[i9 + k * 3 + 2] = nz;
+        }
+
+        triVertIds[t * 3] = getVertId(x0, y0, z0);
+        triVertIds[t * 3 + 1] = getVertId(x1, y1, z1);
+        triVertIds[t * 3 + 2] = getVertId(x2, y2, z2);
+      }
+
+      const edgeMap = new Map();
+      for (let t = 0; t < triCount; t++) {
+        const ids = [triVertIds[t * 3], triVertIds[t * 3 + 1], triVertIds[t * 3 + 2]];
+        for (let e = 0; e < 3; e++) {
+          const a = ids[e], b = ids[(e + 1) % 3];
+          if (a === b) continue;
+          const lo = a < b ? a : b, hi = a < b ? b : a;
+          const ek = lo * 2097152 + hi;
+          let arr = edgeMap.get(ek);
+          if (!arr) {
+            arr = [a, b, t, -1];
+            edgeMap.set(ek, arr);
+          } else if (arr[3] === -1) {
+            arr[3] = t;
+          }
+        }
+      }
+
+      const cosThresh = Math.cos((creaseDeg * Math.PI) / 180);
+      const creaseList = [];
+      const smoothEdges = [];
+
+      for (const e of edgeMap.values()) {
+        const [va, vb, t0, t1] = e;
+        const p0 = [qVerts[va * 3], qVerts[va * 3 + 1], qVerts[va * 3 + 2]];
+        const p1 = [qVerts[vb * 3], qVerts[vb * 3 + 1], qVerts[vb * 3 + 2]];
+        if (t1 === -1) {
+          creaseList.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2]);
+        } else {
+          const n0 = [triNormals[t0 * 3], triNormals[t0 * 3 + 1], triNormals[t0 * 3 + 2]];
+          const n1 = [triNormals[t1 * 3], triNormals[t1 * 3 + 1], triNormals[t1 * 3 + 2]];
+          const dot = n0[0] * n1[0] + n0[1] * n1[1] + n0[2] * n1[2];
+          if (dot < cosThresh) {
+            creaseList.push(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2]);
+          } else if (dot < 0.999995) {
+            smoothEdges.push({ p0, p1, n0, n1 });
+          }
+        }
+      }
+
+      for (let i = 0; i < customEdges.length; i++) {
+        creaseList.push(customEdges[i]);
+      }
+
+      let minX = Infinity, minY = Infinity, minZ = Infinity;
+      let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+      for (let i = 0; i < positions.length; i += 3) {
+        const x = positions[i], y = positions[i + 1], z = positions[i + 2];
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+        if (z < minZ) minZ = z; if (z > maxZ) maxZ = z;
+      }
+
+      return {
+        positions,
+        normals,
+        triCount,
+        creaseEdges: new Float32Array(creaseList),
+        smoothEdges,
+        bbox: triCount > 0 ? [minX, minY, minZ, maxX, maxY, maxZ] : null
+      };
+    }
+
+    function parseSTLBase64(b64, transformFn = null, filterFn = null, creaseDeg = 24) {
+      const binStr = atob(b64);
+      const len = binStr.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) bytes[i] = binStr.charCodeAt(i);
+      const dv = new DataView(bytes.buffer);
+      const count = dv.getUint32(80, true);
+      const verts = [];
+      let off = 84;
+      for (let i = 0; i < count; i++) {
+        let x0 = dv.getFloat32(off + 12, true), y0 = dv.getFloat32(off + 16, true), z0 = dv.getFloat32(off + 20, true);
+        let x1 = dv.getFloat32(off + 24, true), y1 = dv.getFloat32(off + 28, true), z1 = dv.getFloat32(off + 32, true);
+        let x2 = dv.getFloat32(off + 36, true), y2 = dv.getFloat32(off + 40, true), z2 = dv.getFloat32(off + 44, true);
+        off += 50;
+        if (filterFn && !filterFn(x0, y0, z0, x1, y1, z1, x2, y2, z2)) continue;
+        if (transformFn) {
+          if (transformFn._flipWinding === undefined) {
+            const o = transformFn(0, 0, 0);
+            const ex = transformFn(1, 0, 0), ey = transformFn(0, 1, 0), ez = transformFn(0, 0, 1);
+            const ux = ex[0] - o[0], uy = ex[1] - o[1], uz = ex[2] - o[2];
+            const vx = ey[0] - o[0], vy = ey[1] - o[1], vz = ey[2] - o[2];
+            const wx = ez[0] - o[0], wy = ez[1] - o[1], wz = ez[2] - o[2];
+            const det = ux * (vy * wz - vz * wy) - uy * (vx * wz - vz * wx) + uz * (vx * wy - vy * wx);
+            transformFn._flipWinding = det < 0;
+          }
+          [x0, y0, z0] = transformFn(x0, y0, z0);
+          [x1, y1, z1] = transformFn(x1, y1, z1);
+          [x2, y2, z2] = transformFn(x2, y2, z2);
+          if (transformFn._flipWinding) {
+            const tx = x1, ty = y1, tz = z1;
+            x1 = x2; y1 = y2; z1 = z2;
+            x2 = tx; y2 = ty; z2 = tz;
+          }
+        }
+        verts.push(x0, y0, z0, x1, y1, z1, x2, y2, z2);
+      }
+      return buildGeometryFromTriangles(verts, creaseDeg);
+    }
+
+    function pushTri(arr, a, b, c) {
+      arr.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    }
+    function pushQuad(arr, a, b, c, d) {
+      pushTri(arr, a, b, c);
+      pushTri(arr, a, c, d);
+    }
+
+    function createBoxTris(cx, cy, cz, w, h, d, out = []) {
+      const x0 = cx - w / 2, x1 = cx + w / 2;
+      const y0 = cy - h / 2, y1 = cy + h / 2;
+      const z0 = cz - d / 2, z1 = cz + d / 2;
+      pushQuad(out, [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]);
+      pushQuad(out, [x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0]);
+      pushQuad(out, [x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1]);
+      pushQuad(out, [x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]);
+      pushQuad(out, [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0]);
+      pushQuad(out, [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]);
+      return out;
+    }
+
+    function createCylinderTris(cx, cy, cz, rTop, rBot, len, segs = 24, axis = "y", out = []) {
+      const h = len / 2;
+      const ptsBot = [], ptsTop = [];
+      for (let i = 0; i < segs; i++) {
+        const ang = (i / segs) * Math.PI * 2;
+        const ca = Math.cos(ang), sa = Math.sin(ang);
+        if (axis === "y") {
+          ptsBot.push([cx + rBot * ca, cy - h, cz - rBot * sa]);
+          ptsTop.push([cx + rTop * ca, cy + h, cz - rTop * sa]);
+        } else if (axis === "z") {
+          ptsBot.push([cx + rBot * ca, cy + rBot * sa, cz - h]);
+          ptsTop.push([cx + rTop * ca, cy + rTop * sa, cz + h]);
+        } else {
+          ptsBot.push([cx - h, cy + rBot * ca, cz + rBot * sa]);
+          ptsTop.push([cx + h, cy + rTop * ca, cz + rTop * sa]);
+        }
+      }
+      const cBot = axis === "y" ? [cx, cy - h, cz] : axis === "z" ? [cx, cy, cz - h] : [cx - h, cy, cz];
+      const cTop = axis === "y" ? [cx, cy + h, cz] : axis === "z" ? [cx, cy, cz + h] : [cx + h, cy, cz];
+      for (let i = 0; i < segs; i++) {
+        const j = (i + 1) % segs;
+        if (rBot > 0) pushTri(out, cBot, ptsBot[j], ptsBot[i]);
+        if (rTop > 0) pushTri(out, cTop, ptsTop[i], ptsTop[j]);
+        pushQuad(out, ptsBot[i], ptsBot[j], ptsTop[j], ptsTop[i]);
+      }
+      return out;
+    }
+
+    function createRingTubeTris(cx, cy, cz, rIn, rOut, depth, segs = 36, out = []) {
+      const z0 = cz - depth / 2, z1 = cz + depth / 2;
+      for (let i = 0; i < segs; i++) {
+        const a0 = (i / segs) * Math.PI * 2;
+        const a1 = ((i + 1) / segs) * Math.PI * 2;
+        const c0 = Math.cos(a0), s0 = Math.sin(a0);
+        const c1 = Math.cos(a1), s1 = Math.sin(a1);
+        const o00 = [cx + rOut * c0, cy + rOut * s0, z0];
+        const o10 = [cx + rOut * c1, cy + rOut * s1, z0];
+        const o01 = [cx + rOut * c0, cy + rOut * s0, z1];
+        const o11 = [cx + rOut * c1, cy + rOut * s1, z1];
+        const i00 = [cx + rIn * c0, cy + rIn * s0, z0];
+        const i10 = [cx + rIn * c1, cy + rIn * s1, z0];
+        const i01 = [cx + rIn * c0, cy + rIn * s0, z1];
+        const i11 = [cx + rIn * c1, cy + rIn * s1, z1];
+        pushQuad(out, o00, o10, o11, o01);
+        pushQuad(out, i10, i00, i01, i11);
+        pushQuad(out, o01, o11, i11, i01);
+        pushQuad(out, i00, i10, o10, o00);
+      }
+      return out;
+    }
+
+    function createDomeTris(cx, cy, cz, r, rings = 8, segs = 16, out = []) {
+      for (let i = 0; i < rings; i++) {
+        const phi0 = (i / rings) * (Math.PI / 2);
+        const phi1 = ((i + 1) / rings) * (Math.PI / 2);
+        const y0 = cy + r * Math.sin(phi0), r0 = r * Math.cos(phi0);
+        const y1 = cy + r * Math.sin(phi1), r1 = r * Math.cos(phi1);
+        for (let j = 0; j < segs; j++) {
+          const t0 = (j / segs) * Math.PI * 2;
+          const t1 = ((j + 1) / segs) * Math.PI * 2;
+          const a = [cx + r0 * Math.cos(t0), y0, cz - r0 * Math.sin(t0)];
+          const b = [cx + r0 * Math.cos(t1), y0, cz - r0 * Math.sin(t1)];
+          const c = [cx + r1 * Math.cos(t1), y1, cz - r1 * Math.sin(t1)];
+          const d = [cx + r1 * Math.cos(t0), y1, cz - r1 * Math.sin(t0)];
+          if (i < rings - 1) pushQuad(out, a, b, c, d);
+          else pushTri(out, a, b, [cx, cy + r, cz]);
+        }
+      }
+      return out;
+    }
+
+    function createThorlabsPostParts(px, pz, yTopTarget, yBoardTop = 15.7) {
+      const totalH = Math.max(18, yTopTarget - yBoardTop);
+      const baseH = 5.0;
+      const phH = Math.min(Math.max(24, totalH * 0.56), totalH - 8);
+      const trH = Math.max(6, totalH - baseH - phH + 4);
+
+      const baseTris = [];
+      createBoxTris(px, yBoardTop + baseH / 2, pz, 34, baseH, 24, baseTris);
+      createCylinderTris(px + 12, yBoardTop + baseH + 1.5, pz, 2.5, 2.5, 3, 12, "y", baseTris);
+
+      const phTris = [];
+      const phCenterY = yBoardTop + baseH + phH / 2;
+      createCylinderTris(px, phCenterY, pz, 12.7, 12.7, phH, 24, "y", phTris);
+      createCylinderTris(px, yBoardTop + baseH + phH - 2, pz, 14.2, 14.2, 4, 24, "y", phTris);
+
+      const screwTris = [];
+      createCylinderTris(px + 16.5, yBoardTop + baseH + phH - 6.5, pz, 3.8, 3.8, 9, 14, "x", screwTris);
+      createCylinderTris(px + 12, yBoardTop + baseH + phH - 6.5, pz, 1.8, 1.8, 4, 10, "x", screwTris);
+
+      const trTris = [];
+      const trCenterY = yTopTarget - trH / 2;
+      createCylinderTris(px, trCenterY, pz, 6.35, 6.35, trH, 20, "y", trTris);
+
+      return {
+        clamp: buildGeometryFromTriangles(baseTris, 25),
+        holder: buildGeometryFromTriangles(phTris, 25),
+        shaft: buildGeometryFromTriangles(trTris, 25),
+        screw: buildGeometryFromTriangles(screwTris, 25)
+      };
+    }
+
+    // =========================================================================
+    // 3. SCENE DEFINITION, EXACT STL ASSEMBLY & VISUAL THEMES
+    // =========================================================================
+    const Y_BB_BOTTOM = 3.0;
+    const Y_BB_TOP = 15.7;
+    const Y_BEAM = 108.0;
+
+    const THEMES = {
+      pencil: {
+        name: "Lápiz Sutil",
+        bg: "#f7f4ec",
+        isPencil: true,
+        isLineOnly: false,
+        defaultPaper: 35,
+        defaultPencil: 35,
+        defaultHatch: true,
+        beamColor: "#c82828",
+        parts: {
+          "bb-alice":          { fill: "#ede9de", edge: "#4a463f", sub: { feet: "#5a564f", grid: "#8d877a" } },
+          "bb-bob":            { fill: "#ede9de", edge: "#4a463f", sub: { feet: "#5a564f", grid: "#8d877a" } },
+          "alice-box":         { fill: "#f4f1e8", edge: "#2a2824", sub: { buttons: "#dcd7ca" } },
+          "alice-laser":       { fill: "#dedad0", edge: "#24221e", sub: { cap: "#d4d0c6", mount: "#e5e1d7", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684", diode: "#c82828" } },
+          "alice-pbs":         { fill: "#dce7ef", edge: "#24221e", sub: { diag: "#95b2c7", mount: "#e3dfd5", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "alice-polarizer":   { fill: "#f2efe6", edge: "#2a2824", sub: { dial: "#e8e4da", optic: "#e0ebf2", knob: "#dcd8cd", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "alice-sector-gear": { fill: "#e6ebe1", edge: "#2b3027" },
+          "alice-pinion":      { fill: "#e6ebe1", edge: "#2b3027", sub: { hub: "#cfd9e4" } },
+          "alice-stepper":     { fill: "#efe9dd", edge: "#2a2824", sub: { motor: "#e6e4de", cap: "#d3dce4", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "bob-polarizer":     { fill: "#f0ece4", edge: "#2a2824", sub: { dial: "#e6e1d7", optic: "#e0ebf2", knob: "#dcd7cc", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "bob-sector-gear":   { fill: "#efe4e2", edge: "#302422" },
+          "bob-pinion":        { fill: "#efe4e2", edge: "#302422", sub: { hub: "#d6d3cb" } },
+          "bob-stepper":       { fill: "#efe9dd", edge: "#2a2824", sub: { motor: "#e6e4de", cap: "#d3dce4", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "bob-pbs":           { fill: "#dce7ef", edge: "#24221e", sub: { diag: "#95b2c7", mount: "#e3dfd5", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "bob-det1":          { fill: "#f6f4ed", edge: "#262522", sub: { led: "#4eb828", sensor: "#484846", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "bob-det2":          { fill: "#f6f4ed", edge: "#262522", sub: { led: "#4eb828", sensor: "#484846", clamp: "#dedad0", holder: "#dedad0", shaft: "#efece4", screw: "#b5a684" } },
+          "bob-box":           { fill: "#f4f1e8", edge: "#2a2824", sub: { buttons: "#dcd7ca" } }
+        }
+      }
+    };
+
+    const ALICE_BUTTON_SPECS = [
+      { idx: 0, bx: -42, deg: 0, base: "+", bit: 0, short: "B1: 0° (Base + • Bit 0)" },
+      { idx: 1, bx: -14, deg: 90, base: "+", bit: 1, short: "B2: 90° (Base + • Bit 1)" },
+      { idx: 2, bx: 14, deg: -45, base: "×", bit: 0, short: "B3: -45° (Base × • Bit 0)" },
+      { idx: 3, bx: 42, deg: 45, base: "×", bit: 1, short: "B4: +45° (Base × • Bit 1)" }
+    ];
+    const BOB_BUTTON_SPECS = [
+      { idx: 0, bx: 20, deg: 0, base: "+", short: "Base + (0°)" },
+      { idx: 1, bx: -20, deg: 45, base: "×", short: "Base × (+45°)" }
+    ];
+
+    function opticalToGearMechDeg(optDeg) {
+      const clamped = Math.max(-45, Math.min(90, optDeg));
+      return (clamped - 22.5) * 0.58;
+    }
+
+    const state = {
+      theme: "pencil",
+      ortho: true,
+      pencilIntensity: 35,
+      strokeWidth: 1.15,
+      paperOpacity: 35,
+      hatch: true,
+      showBeam: true,
+      showGrid: true,
+      showLabels: false,
+      aliceDeg: 0,
+      bobDeg: 0,
+      gapMm: 170,
+      selectedId: null,
+      demo: {
+        active: true,
+        autoRunning: false,
+        autoStepIndex: 0,
+        aliceBtnIdx: 0,
+        bobBtnIdx: 0,
+        alicePressedIdx: -1,
+        bobPressedIdx: -1,
+        moving: false,
+        laserOn: true,
+        activeDetector: 1,
+        lastMatch: true,
+        lastBit: 0,
+        lastKey: "0",
+        events: []
+      },
+      cam: {
+        az: 0.78,
+        el: 0.44,
+        dist: 890,
+        orthoScale: 325,
+        target: [0, 58, 0]
+      }
+    };
+
+    function isDetectorLedLit(compId) {
+      if (!state.demo.active) return false;
+      if (!state.demo.laserOn || state.demo.moving) return false;
+      return (compId === "bob-det1" && state.demo.activeDetector === 1) ||
+             (compId === "bob-det2" && state.demo.activeDetector === 2);
+    }
+
+    // =========================================================================
+    // 4. BUILD ALL 3D COMPONENTS & EXACT STL + THORLABS GEOMETRIES
+    // =========================================================================
+    function buildSceneCatalog() {
+      if (!window.STL_BASE64_DATA) {
+        throw new Error("No se encontró window.STL_BASE64_DATA (stl_data.js). Asegúrate de que stl_data.js esté en la misma carpeta.");
+      }
+      const stl = window.STL_BASE64_DATA;
+
+      function buildElectronicsBox(numButtons) {
+        const meshes = [];
+        const cuerpoGeo = parseSTLBase64(stl.aliceCuerpo, (x, y, z) => [-y, z + 1.0, -x], null, 24);
+        meshes.push({ geo: cuerpoGeo, role: "main" });
+
+        if (numButtons === 4) {
+          const tapaGeo = parseSTLBase64(stl.aliceTapa, (x, y, z) => {
+            const xp = -x + 122.0, yp = y, zp = -z + 46.0;
+            return [-yp, zp + 1.0, -xp];
+          }, null, 24);
+          meshes.push({ geo: tapaGeo, role: "main" });
+        } else {
+          const holeYs = [[-48.0, -36.0], [-20.0, -8.0], [8.0, 20.0], [36.0, 48.0]];
+          const inAliceHole = (x0, y0, z0, x1, y1, z1, x2, y2, z2) => {
+            const minX = Math.min(x0, x1, x2), maxX = Math.max(x0, x1, x2);
+            const minY = Math.min(y0, y1, y2), maxY = Math.max(y0, y1, y2);
+            if (minX >= 115.99 && maxX <= 128.01) {
+              for (const [hy0, hy1] of holeYs) {
+                if (minY >= hy0 - 0.01 && maxY <= hy1 + 0.01) return false;
+              }
+            }
+            return true;
+          };
+          const mapTapa = (x, y, z) => {
+            const xp = -x + 122.0, yp = y, zp = -z + 46.0;
+            return [-yp, zp + 1.0, -xp];
+          };
+          const binStr = atob(stl.aliceTapa);
+          const bytes = new Uint8Array(binStr.length);
+          for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+          const dv = new DataView(bytes.buffer);
+          const count = dv.getUint32(80, true);
+          const bobLidTris = [];
+          let off = 84;
+          for (let i = 0; i < count; i++) {
+            const x0 = dv.getFloat32(off + 12, true), y0 = dv.getFloat32(off + 16, true), z0 = dv.getFloat32(off + 20, true);
+            const x1 = dv.getFloat32(off + 24, true), y1 = dv.getFloat32(off + 28, true), z1 = dv.getFloat32(off + 32, true);
+            const x2 = dv.getFloat32(off + 36, true), y2 = dv.getFloat32(off + 40, true), z2 = dv.getFloat32(off + 44, true);
+            off += 50;
+            if (!inAliceHole(x0, y0, z0, x1, y1, z1, x2, y2, z2)) continue;
+            pushTri(bobLidTris, mapTapa(x0, y0, z0), mapTapa(x1, y1, z1), mapTapa(x2, y2, z2));
+          }
+          for (const [hy0, hy1] of holeYs) {
+            pushTri(bobLidTris, mapTapa(116.0, hy0, 0.0), mapTapa(116.0, hy1, 0.0), mapTapa(128.0, hy1, 0.0));
+            pushTri(bobLidTris, mapTapa(116.0, hy0, 0.0), mapTapa(128.0, hy1, 0.0), mapTapa(128.0, hy0, 0.0));
+            const strips = [hy0, hy0 + 3.0, hy1 - 3.0, hy1];
+            for (let k = 0; k < 3; k++) {
+              const ya = strips[k], yb = strips[k + 1];
+              pushTri(bobLidTris, mapTapa(116.0, ya, 4.5), mapTapa(128.0, yb, 4.5), mapTapa(116.0, yb, 4.5));
+              pushTri(bobLidTris, mapTapa(116.0, ya, 4.5), mapTapa(128.0, ya, 4.5), mapTapa(128.0, yb, 4.5));
+            }
+          }
+          meshes.push({ geo: buildGeometryFromTriangles(bobLidTris, 24), role: "main" });
+        }
+
+        const specs = numButtons === 4 ? ALICE_BUTTON_SPECS : BOB_BUTTON_SPECS;
+        const side = numButtons === 4 ? "alice" : "bob";
+        for (const sp of specs) {
+          const collarTris = [];
+          createCylinderTris(sp.bx, 47.0 + 0.95, 0, 5.5, 5.5, 1.9, 18, "y", collarTris);
+          meshes.push({
+            geo: buildGeometryFromTriangles(collarTris, 24),
+            role: "buttons",
+            btnMeta: { side, idx: sp.idx, deg: sp.deg, base: sp.base, bit: sp.bit },
+            isCollar: true
+          });
+          const plungerTris = [];
+          createCylinderTris(sp.bx, 47.0 + 4.1, 0, 4.3, 4.5, 4.8, 18, "y", plungerTris);
+          meshes.push({
+            geo: buildGeometryFromTriangles(plungerTris, 24),
+            role: "buttons",
+            btnMeta: { side, idx: sp.idx, deg: sp.deg, base: sp.base, bit: sp.bit },
+            isPlunger: true
+          });
+        }
+        return meshes;
+      }
+
+      function buildBreadboard() {
+        const meshes = [];
+        const bbTris = [];
+        const nx = 2, nz = 4;
+        const dx = 250 / nx, dz = 400 / nz;
+        const y0 = Y_BB_BOTTOM, y1 = Y_BB_TOP;
+        for (let ix = 0; ix < nx; ix++) {
+          const x0 = -125 + ix * dx, x1 = x0 + dx;
+          for (let iz = 0; iz < nz; iz++) {
+            const z0 = -200 + iz * dz, z1 = z0 + dz;
+            pushQuad(bbTris, [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0]);
+            pushQuad(bbTris, [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]);
+            if (iz === nz - 1) pushQuad(bbTris, [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]);
+            if (iz === 0) pushQuad(bbTris, [x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0]);
+            if (ix === nx - 1) pushQuad(bbTris, [x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1]);
+            if (ix === 0) pushQuad(bbTris, [x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]);
+          }
+        }
+        meshes.push({ geo: buildGeometryFromTriangles(bbTris, 25), role: "main" });
+
+        const feetTris = [];
+        for (const fx of [-104, 104]) {
+          for (const fz of [-178, 178]) {
+            createCylinderTris(fx, Y_BB_BOTTOM / 2, fz, 12.0, 12.5, Y_BB_BOTTOM, 18, "y", feetTris);
+          }
+        }
+        meshes.push({ geo: buildGeometryFromTriangles(feetTris, 25), role: "feet", isFeet: true });
+
+        const gridEdges = [];
+        const r = 3.1, seg = 10, gy = Y_BB_TOP + 0.16;
+        for (let ix = 0; ix < 10; ix++) {
+          const hx = -112.5 + ix * 25;
+          for (let iz = 0; iz < 16; iz++) {
+            const hz = -187.5 + iz * 25;
+            for (let k = 0; k < seg; k++) {
+              const a0 = (k / seg) * Math.PI * 2;
+              const a1 = ((k + 1) / seg) * Math.PI * 2;
+              gridEdges.push(
+                hx + r * Math.cos(a0), gy, hz + r * Math.sin(a0),
+                hx + r * Math.cos(a1), gy, hz + r * Math.sin(a1)
+              );
+            }
+          }
+        }
+        const bx = 121, bz = 196;
+        gridEdges.push(
+          -bx, gy, -bz, bx, gy, -bz,
+          bx, gy, -bz, bx, gy, bz,
+          bx, gy, bz, -bx, gy, bz,
+          -bx, gy, bz, -bx, gy, -bz
+        );
+        meshes.push({
+          geo: { positions: new Float32Array(0), normals: new Float32Array(0), triCount: 0, creaseEdges: new Float32Array(gridEdges), smoothEdges: [] },
+          role: "grid",
+          isGrid: true
+        });
+        return meshes;
+      }
+
+      function buildRSP1(dialRotDir = 1) {
+        const meshes = [];
+        const bodyTris = [];
+        createRingTubeTris(0, Y_BEAM, 0, 21, 30, 15, 36, bodyTris);
+        createBoxTris(0, Y_BEAM - 30.5, 0, 24, 9, 15, bodyTris);
+        createBoxTris(0, Y_BEAM + 31.0, 0, 18, 12, 15, bodyTris);
+        const bodyIdxEdges = [0, Y_BEAM + 25.0, 7.6, 0, Y_BEAM + 21.5, 7.6, 0, Y_BEAM + 25.0, -7.6, 0, Y_BEAM + 21.5, -7.6];
+        meshes.push({ geo: buildGeometryFromTriangles(bodyTris, 24, bodyIdxEdges), role: "main" });
+
+        const knobTris = [];
+        createCylinderTris(16 * dialRotDir, Y_BEAM + 32, 0, 3.6, 3.6, 14, 16, "x", knobTris);
+        createCylinderTris(24 * dialRotDir, Y_BEAM + 32, 0, 4.8, 4.8, 7, 16, "x", knobTris);
+        meshes.push({ geo: buildGeometryFromTriangles(knobTris, 24), role: "knob" });
+
+        const dialTris = [];
+        createRingTubeTris(0, Y_BEAM, 0.5, 12.7, 20.8, 16.5, 36, dialTris);
+        const tickEdges = [];
+        for (let deg = 0; deg < 360; deg += 15) {
+          const rad = (deg * Math.PI) / 180;
+          const isMajor = deg % 45 === 0;
+          const r1 = isMajor ? 14.2 : 16.2;
+          const r2 = 19.8;
+          const c = Math.cos(rad), s = Math.sin(rad);
+          for (const zf of [8.78, -7.78]) {
+            tickEdges.push(r1 * c, Y_BEAM + r1 * s, zf, r2 * c, Y_BEAM + r2 * s, zf);
+          }
+        }
+        meshes.push({ geo: buildGeometryFromTriangles(dialTris, 24, tickEdges), role: "dial", isDialPart: true });
+
+        // Solid RSP1 aperture optic plug blocking rear bore edges
+        const opticTris = [];
+        createCylinderTris(0, Y_BEAM, 0.5, 12.8, 12.8, 13.0, 36, "z", opticTris);
+        meshes.push({ geo: buildGeometryFromTriangles(opticTris, 24), role: "optic", transparent: false, isDialPart: true });
+
+        const post = createThorlabsPostParts(0, 0, Y_BEAM - 35.0);
+        meshes.push({ geo: post.clamp, role: "clamp" });
+        meshes.push({ geo: post.holder, role: "holder" });
+        meshes.push({ geo: post.shaft, role: "shaft" });
+        meshes.push({ geo: post.screw, role: "screw" });
+        return meshes;
+      }
+
+      function buildPBS() {
+        const meshes = [];
+        const cubeTris = [];
+        const cubeCreases = [];
+        const hC = 12.7;
+        const gridN = 3;
+        const addSubdividedFace = (origin, uVec, vVec) => {
+          for (let iu = 0; iu < gridN; iu++) {
+            for (let iv = 0; iv < gridN; iv++) {
+              const u0 = (iu / gridN) * 2 - 1, u1 = ((iu + 1) / gridN) * 2 - 1;
+              const v0 = (iv / gridN) * 2 - 1, v1 = ((iv + 1) / gridN) * 2 - 1;
+              const pt = (u, v) => [
+                origin[0] + u * uVec[0] + v * vVec[0],
+                origin[1] + u * uVec[1] + v * vVec[1],
+                origin[2] + u * uVec[2] + v * vVec[2]
+              ];
+              pushQuad(cubeTris, pt(u0, v0), pt(u1, v0), pt(u1, v1), pt(u0, v1));
+            }
+          }
+        };
+        addSubdividedFace([0, Y_BEAM, hC], [hC, 0, 0], [0, hC, 0]);
+        addSubdividedFace([0, Y_BEAM, -hC], [-hC, 0, 0], [0, hC, 0]);
+        addSubdividedFace([hC, Y_BEAM, 0], [0, 0, -hC], [0, hC, 0]);
+        addSubdividedFace([-hC, Y_BEAM, 0], [0, 0, hC], [0, hC, 0]);
+        addSubdividedFace([0, Y_BEAM + hC, 0], [hC, 0, 0], [0, 0, -hC]);
+        addSubdividedFace([0, Y_BEAM - hC, 0], [hC, 0, 0], [0, 0, hC]);
+        cubeCreases.push(
+          -hC, Y_BEAM + hC + 0.04, hC, hC, Y_BEAM + hC + 0.04, -hC,
+          -hC, Y_BEAM - hC - 0.04, hC, hC, Y_BEAM - hC - 0.04, -hC
+        );
+        meshes.push({ geo: buildGeometryFromTriangles(cubeTris, 25, cubeCreases), role: "main", transparent: false, doubleSided: false });
+
+        const mountTris = [];
+        createBoxTris(0, Y_BEAM - 15.2, 0, 32, 5.0, 32, mountTris);
+        createBoxTris(0, Y_BEAM - 21.0, 0, 32, 4.5, 32, mountTris);
+        createBoxTris(14.0, Y_BEAM - 9.0, 14.0, 4.0, 8.0, 4.0, mountTris);
+        createCylinderTris(13.5, Y_BEAM + 4.0, 13.5, 3.0, 3.0, 34.0, 14, "y", mountTris);
+        createBoxTris(6.8, Y_BEAM + 19.5, 6.8, 18.0, 4.2, 6.0, mountTris);
+        createCylinderTris(0, Y_BEAM + 16.0, 0, 4.0, 4.0, 6.0, 14, "y", mountTris);
+        meshes.push({ geo: buildGeometryFromTriangles(mountTris, 25), role: "mount" });
+
+        const screwTris = [];
+        createCylinderTris(0, Y_BEAM + 24.5, 0, 4.2, 4.2, 7.0, 16, "y", screwTris);
+        createCylinderTris(10, Y_BEAM - 18.0, 17, 2.6, 2.6, 6.0, 12, "z", screwTris);
+        createCylinderTris(-10, Y_BEAM - 18.0, 17, 2.6, 2.6, 6.0, 12, "z", screwTris);
+        meshes.push({ geo: buildGeometryFromTriangles(screwTris, 25), role: "screw" });
+
+        const post = createThorlabsPostParts(0, 0, Y_BEAM - 23.2);
+        meshes.push({ geo: post.clamp, role: "clamp" });
+        meshes.push({ geo: post.holder, role: "holder" });
+        meshes.push({ geo: post.shaft, role: "shaft" });
+        meshes.push({ geo: post.screw, role: "screw" });
+        return meshes;
+      }
+
+      function buildLaserModule() {
+        const meshes = [];
+        const laserGeo = parseSTLBase64(stl.cajaLaser, (x, y, z) => [-x, y + Y_BEAM, -z + 6.0], null, 26);
+        meshes.push({ geo: laserGeo, role: "main" });
+
+        if (stl.tapaTraseraLaser) {
+          const rearCapGeo = parseSTLBase64(stl.tapaTraseraLaser, (x, y, z) => [-x, y + Y_BEAM, -z + 6.0], null, 26);
+          meshes.push({ geo: rearCapGeo, role: "cap" });
+        }
+
+        const diodeTris = [];
+        createCylinderTris(0, Y_BEAM, 5.1, 2.1, 2.1, 1.4, 16, "z", diodeTris);
+        meshes.push({ geo: buildGeometryFromTriangles(diodeTris, 25), role: "diode" });
+
+        const mountTris = [];
+        createRingTubeTris(0, Y_BEAM, 0, 11.55, 17.5, 11.0, 28, mountTris);
+        createBoxTris(0, Y_BEAM - 20.5, 0, 34, 10, 13, mountTris);
+        createBoxTris(0, Y_BEAM + 15.5, -9.5, 36, 5.0, 4.5, mountTris);
+        createBoxTris(0, Y_BEAM - 15.5, -9.5, 36, 5.0, 4.5, mountTris);
+        createBoxTris(-15.5, Y_BEAM, -9.5, 5.0, 26.0, 4.5, mountTris);
+        createBoxTris(15.5, Y_BEAM, -9.5, 5.0, 26.0, 4.5, mountTris);
+        meshes.push({ geo: buildGeometryFromTriangles(mountTris, 25), role: "mount" });
+
+        const screwTris = [];
+        createCylinderTris(14, Y_BEAM + 13, -13, 3.0, 3.0, 7, 14, "z", screwTris);
+        createCylinderTris(-14, Y_BEAM - 13, -13, 3.0, 3.0, 7, 14, "z", screwTris);
+        meshes.push({ geo: buildGeometryFromTriangles(screwTris, 25), role: "screw" });
+
+        const post = createThorlabsPostParts(0, 0, Y_BEAM - 25.5);
+        meshes.push({ geo: post.clamp, role: "clamp" });
+        meshes.push({ geo: post.holder, role: "holder" });
+        meshes.push({ geo: post.shaft, role: "shaft" });
+        meshes.push({ geo: post.screw, role: "screw" });
+        return meshes;
+      }
+
+      function buildSectorGear() {
+        const geo = parseSTLBase64(
+          stl.gears,
+          (x, y, z) => [-(x - 82.50), -y, z - 3.5],
+          (x0, y0, z0, x1, y1, z1, x2, y2, z2) => (x0 + x1 + x2) / 3 >= 4.0,
+          24
+        );
+        return [{ geo, role: "main" }];
+      }
+
+      function buildPinionGear() {
+        const geo = parseSTLBase64(
+          stl.gears,
+          (x, y, z) => [-(x - (-5.01)), -(y - 0.03), z - 3.5],
+          (x0, y0, z0, x1, y1, z1, x2, y2, z2) => (x0 + x1 + x2) / 3 < 4.0,
+          24
+        );
+        const hubTris = [];
+        createCylinderTris(0, 0, 0.2, 4.2, 4.2, 8.2, 20, "z", hubTris);
+        return [
+          { geo, role: "main" },
+          { geo: buildGeometryFromTriangles(hubTris, 24), role: "hub" }
+        ];
+      }
+
+      function buildStepperAssembly() {
+        const meshes = [];
+        const bodyGeo = parseSTLBase64(
+          stl.stepperBody,
+          (x, y, z) => [y, -x + (Y_BEAM - 8.77), -z],
+          null,
+          24
+        );
+        meshes.push({ geo: bodyGeo, role: "main" });
+
+        const motorCylY = Y_BEAM - 8.27;
+        const motorTris = [];
+        createCylinderTris(0, motorCylY, -11.5, 14.0, 14.0, 19.0, 28, "z", motorTris);
+        createBoxTris(0, motorCylY, -1.2, 33.2, 6.4, 1.4, motorTris);
+        createCylinderTris(0, Y_BEAM, -0.5, 4.5, 4.5, 3.0, 16, "z", motorTris);
+        createCylinderTris(0, Y_BEAM, 4.5, 2.5, 2.5, 10.0, 16, "z", motorTris);
+        meshes.push({ geo: buildGeometryFromTriangles(motorTris, 24), role: "motor" });
+
+        const capTris = [];
+        createBoxTris(0, motorCylY - 11.5, -21.5, 14.6, 8.0, 10.5, capTris);
+        meshes.push({ geo: buildGeometryFromTriangles(capTris, 24), role: "cap" });
+
+        const post = createThorlabsPostParts(0, -22.07, Y_BEAM - 35.0);
+        meshes.push({ geo: post.clamp, role: "clamp" });
+        meshes.push({ geo: post.holder, role: "holder" });
+        meshes.push({ geo: post.shaft, role: "shaft" });
+        meshes.push({ geo: post.screw, role: "screw" });
+        return meshes;
+      }
+
+      function buildDetectorAssembly() {
+        const meshes = [];
+        const yOff = Y_BEAM - 17.5;
+        const zOff = -22.5;
+
+        const bodyGeo = parseSTLBase64(stl.cajaOpto, (x, y, z) => [x, y + yOff, z + zOff], null, 24);
+        const funnelGeo = parseSTLBase64(stl.tapaEmbudo, (x, y, z) => [x, y + 17.5 + yOff, z + 45.0 + zOff], null, 24);
+        const diapGeo = parseSTLBase64(stl.diafragma, (x, y, z) => [x, y + 17.5 + yOff, z + 66.0 + zOff], null, 24);
+        meshes.push({ geo: bodyGeo, role: "main" });
+        meshes.push({ geo: funnelGeo, role: "main" });
+        meshes.push({ geo: diapGeo, role: "main" });
+
+        const ledTris = [];
+        const ledBaseY = 37.5 + yOff;
+        createCylinderTris(0, ledBaseY + 1.4, 0, 2.6, 2.6, 2.8, 16, "y", ledTris);
+        createDomeTris(0, ledBaseY + 2.8, 0, 2.6, 6, 16, ledTris);
+        meshes.push({ geo: buildGeometryFromTriangles(ledTris, 24), role: "led" });
+
+        const ledGlowTris = [];
+        createDomeTris(0, ledBaseY + 1.2, 0, 5.4, 7, 16, ledGlowTris);
+        meshes.push({ geo: buildGeometryFromTriangles(ledGlowTris, 16), role: "ledGlow", transparent: true, alpha: 0.45 });
+
+        const sensTris = [];
+        createBoxTris(0, Y_BEAM, 4.0, 9.0, 9.0, 3.0, sensTris);
+        meshes.push({ geo: buildGeometryFromTriangles(sensTris, 24), role: "sensor" });
+
+        const post = createThorlabsPostParts(0, 0, yOff);
+        meshes.push({ geo: post.clamp, role: "clamp" });
+        meshes.push({ geo: post.holder, role: "holder" });
+        meshes.push({ geo: post.shaft, role: "shaft" });
+        meshes.push({ geo: post.screw, role: "screw" });
+        return meshes;
+      }
+
+      const aliceBoxMeshes = buildElectronicsBox(4);
+      const bobBoxMeshes = buildElectronicsBox(2);
+      const bbMeshes = buildBreadboard();
+      const laserMeshes = buildLaserModule();
+      const pbsMeshes = buildPBS();
+      const rspAliceMeshes = buildRSP1(1);
+      const rspBobMeshes = buildRSP1(-1);
+      const sectorGearMeshes = buildSectorGear();
+      const pinionMeshes = buildPinionGear();
+      const stepperMeshes = buildStepperAssembly();
+      const detMeshes = buildDetectorAssembly();
+
+      return [
+        { id: "bb-alice", name: "Base Óptica Alice (MB2540/M)", layer: "breadboards", module: "alice", meshes: bbMeshes, basePos: [0, 0, -285], baseRotY: 0, labelPos: [-105, Y_BB_TOP, -360], shortLabel: "Bases Thorlabs" },
+        { id: "bb-bob", name: "Base Óptica Bob (MB2540/M)", layer: "breadboards", module: "bob", meshes: bbMeshes, basePos: [0, 0, 285], baseRotY: 0 },
+        { id: "alice-box", name: "Caja Arduino Alice (4 Botones)", layer: "module-alice", module: "alice", meshes: aliceBoxMeshes, basePos: [0, Y_BB_TOP, -420], baseRotY: 0, labelPos: [0, 66, -420], shortLabel: "Arduino Alice (4B)" },
+        { id: "alice-laser", name: "Módulo Láser 650 nm + KM100", layer: "module-alice", module: "alice", meshes: laserMeshes, basePos: [0, 0, -321], baseRotY: 0, labelPos: [0, Y_BEAM + 14, -326], shortLabel: "Láser 650 nm + Tapa" },
+        { id: "alice-pbs", name: "Cubo PBS Alice (PBS201)", layer: "module-alice", module: "alice", meshes: pbsMeshes, basePos: [0, 0, -245], baseRotY: 0, labelPos: [0, Y_BEAM + 20, -245], shortLabel: "PBS Alice" },
+        { id: "alice-polarizer", name: "Polarizador Rotante Alice (RSP1)", layer: "module-alice", module: "alice", meshes: rspAliceMeshes, basePos: [0, 0, -150], baseRotY: 0, isPolarizer: "alice", labelPos: [0, Y_BEAM + 38, -150], shortLabel: "Polarizador Alice" },
+        { id: "alice-sector-gear", name: "Engranaje Sector 120° Alice", layer: "module-alice", module: "alice", meshes: sectorGearMeshes, basePos: [0, Y_BEAM, -137.5], baseRotY: 0, isGear: "alice-sector" },
+        { id: "alice-pinion", name: "Piñón Motor Alice (15T)", layer: "module-alice", module: "alice", meshes: pinionMeshes, basePos: [82.50, Y_BEAM, -137.5], baseRotY: 0, isGear: "alice-pinion" },
+        { id: "alice-stepper", name: "Soporte + Motor Stepper Alice", layer: "module-alice", module: "alice", meshes: stepperMeshes, basePos: [82.50, 0, -143.5], baseRotY: 0, labelPos: [72, Y_BEAM + 14, -142], shortLabel: "Engranaje + Stepper" },
+        { id: "bob-polarizer", name: "Polarizador Rotante Bob (RSP1)", layer: "module-bob", module: "bob", meshes: rspBobMeshes, basePos: [0, 0, 145], baseRotY: Math.PI, isPolarizer: "bob", labelPos: [0, Y_BEAM + 38, 145], shortLabel: "Polarizador Bob" },
+        { id: "bob-sector-gear", name: "Engranaje Sector 120° Bob", layer: "module-bob", module: "bob", meshes: sectorGearMeshes, basePos: [0, Y_BEAM, 132.5], baseRotY: Math.PI, isGear: "bob-sector" },
+        { id: "bob-pinion", name: "Piñón Motor Bob (15T)", layer: "module-bob", module: "bob", meshes: pinionMeshes, basePos: [-82.50, Y_BEAM, 132.5], baseRotY: Math.PI, isGear: "bob-pinion" },
+        { id: "bob-stepper", name: "Soporte + Motor Stepper Bob", layer: "module-bob", module: "bob", meshes: stepperMeshes, basePos: [-82.50, 0, 138.5], baseRotY: Math.PI },
+        { id: "bob-pbs", name: "Cubo PBS Bob (PBS201)", layer: "module-bob", module: "bob", meshes: pbsMeshes, basePos: [0, 0, 235], baseRotY: 0, labelPos: [0, Y_BEAM + 20, 235], shortLabel: "PBS Bob" },
+        { id: "bob-det1", name: "Detector 1 Bob (Transmitido)", layer: "module-bob", module: "bob", meshes: detMeshes, basePos: [0, 0, 320], baseRotY: Math.PI, labelPos: [0, Y_BEAM + 22, 320], shortLabel: "Detectores 1 y 2" },
+        { id: "bob-det2", name: "Detector 2 Bob (Reflejado 90°)", layer: "module-bob", module: "bob", meshes: detMeshes, basePos: [-85, 0, 235], baseRotY: Math.PI / 2 },
+        { id: "bob-box", name: "Caja Arduino Bob (2 Botones)", layer: "module-bob", module: "bob", meshes: bobBoxMeshes, basePos: [0, Y_BB_TOP, 420], baseRotY: Math.PI, labelPos: [0, 66, 420], shortLabel: "Arduino Bob (2B)" }
+      ];
+    }
+
+    function getPartState(id) {
+      const themeSpec = (THEMES[state.theme] || THEMES.pencil).parts[id] || { fill: "#ece8df", edge: "#222222" };
+      return {
+        fill: themeSpec.fill,
+        edge: themeSpec.edge,
+        sub: themeSpec.sub || {},
+        visible: true
+      };
+    }
+
+    function getMeshColor(partId, role, meshItem = null) {
+      const ps = getPartState(partId);
+      if (role === "main") return ps.fill;
+      if (role === "led") {
+        if (state.demo.active) {
+          return isDetectorLedLit(partId) ? "#22ff00" : (state.theme === "cad" ? "#333333" : "#284027");
+        }
+        return ps.sub.led || ps.fill;
+      }
+      if (role === "ledGlow") {
+        return "#4dff2a";
+      }
+      if (role === "buttons" && meshItem && meshItem.btnMeta && state.demo.active) {
+        const isSel = meshItem.btnMeta.side === "alice"
+          ? state.demo.aliceBtnIdx === meshItem.btnMeta.idx
+          : state.demo.bobBtnIdx === meshItem.btnMeta.idx;
+        if (isSel && meshItem.isPlunger) {
+          if (state.theme === "cad") return "#333333";
+          const accentCol = meshItem.btnMeta.side === "alice" ? "#2D6480" : "#2E6F56";
+          return state.theme === "pencil" ? mixHex(accentCol, ps.sub.buttons || ps.fill, 0.25) : accentCol;
+        }
+      }
+      return ps.sub[role] || ps.fill;
+    }
+
+    function computeModelMatrix(comp, meshItem = null) {
+      const gapShift = ((state.gapMm - 170) / 2) * (comp.module === "alice" ? -1 : 1);
+      const tx = comp.basePos[0];
+      const ty = comp.basePos[1];
+      const tz = comp.basePos[2] + gapShift;
+      const ry = comp.baseRotY;
+
+      let m = M4.mul(M4.translate(tx, ty, tz), M4.rotY(ry));
+
+      const GEAR_RATIO = 10.0;
+      const PINION_PHASE_DEG = 12.0;
+      const aliceMechDeg = opticalToGearMechDeg(state.aliceDeg);
+      const bobMechDeg = opticalToGearMechDeg(state.bobDeg);
+
+      if (comp.isGear === "alice-sector") {
+        m = M4.mul(m, M4.rotZ((aliceMechDeg * Math.PI) / 180));
+      } else if (comp.isGear === "alice-pinion") {
+        m = M4.mul(m, M4.rotZ(((-aliceMechDeg * GEAR_RATIO + PINION_PHASE_DEG) * Math.PI) / 180));
+      } else if (comp.isGear === "bob-sector") {
+        m = M4.mul(m, M4.rotZ((bobMechDeg * Math.PI) / 180));
+      } else if (comp.isGear === "bob-pinion") {
+        m = M4.mul(m, M4.rotZ(((-bobMechDeg * GEAR_RATIO + PINION_PHASE_DEG) * Math.PI) / 180));
+      } else if (meshItem && meshItem.isDialPart && comp.isPolarizer) {
+        const deg = comp.isPolarizer === "alice" ? aliceMechDeg : bobMechDeg;
+        const rotAroundBeam = M4.mul(M4.translate(0, Y_BEAM, 0), M4.mul(M4.rotZ((deg * Math.PI) / 180), M4.translate(0, -Y_BEAM, 0)));
+        m = M4.mul(m, rotAroundBeam);
+      } else if (meshItem && meshItem.btnMeta && meshItem.isPlunger) {
+        const isSel = meshItem.btnMeta.side === "alice"
+          ? state.demo.aliceBtnIdx === meshItem.btnMeta.idx
+          : state.demo.bobBtnIdx === meshItem.btnMeta.idx;
+        const isPress = meshItem.btnMeta.side === "alice"
+          ? state.demo.alicePressedIdx === meshItem.btnMeta.idx
+          : state.demo.bobPressedIdx === meshItem.btnMeta.idx;
+        const dropY = isPress ? -2.2 : (state.demo.active && isSel ? -1.1 : 0);
+        if (dropY !== 0) m = M4.mul(m, M4.translate(0, dropY, 0));
+      }
+
+      return m;
+    }
+
+    function getBeamSegments() {
+      const gapShift = (state.gapMm - 170) / 2;
+      const zStart = -315 - gapShift;
+      const zBobPbs = 235 + gapShift;
+      const xBobPbs = 0;
+      const zDet1Face = (320 + gapShift) - 43.5;
+      const xDet2Face = -85 + 43.5;
+
+      const dThetaRad = ((state.aliceDeg - state.bobDeg) * Math.PI) / 180;
+      const T = Math.pow(Math.cos(dThetaRad), 2);
+      const R = Math.pow(Math.sin(dThetaRad), 2);
+
+      const mainSeg = [0, Y_BEAM, zStart, xBobPbs, Y_BEAM, zBobPbs];
+      const transSeg = [xBobPbs, Y_BEAM, zBobPbs, xBobPbs, Y_BEAM, Math.max(zBobPbs + 15, zDet1Face)];
+      const reflSeg = [xBobPbs, Y_BEAM, zBobPbs, Math.min(xBobPbs - 15, xDet2Face), Y_BEAM, zBobPbs];
+
+      if (state.demo.active) {
+        if (!state.demo.laserOn || state.demo.moving) {
+          return { enabled: false, demoMode: true, isSplit: false, T, R, main: [], transmitted: [], reflected: [] };
+        }
+        const isSplit = !state.demo.lastMatch;
+        return {
+          enabled: true,
+          demoMode: true,
+          isSplit,
+          T, R,
+          main: mainSeg,
+          transmitted: (isSplit || state.demo.activeDetector === 1) ? transSeg : [],
+          reflected: (isSplit || state.demo.activeDetector === 2) ? reflSeg : []
+        };
+      }
+
+      return {
+        enabled: true,
+        demoMode: false,
+        isSplit: false,
+        T, R,
+        main: mainSeg,
+        transmitted: transSeg,
+        reflected: reflSeg
+      };
+    }
+
+    // =========================================================================
+    // 5. SELF-CONTAINED WEBGL RENDERER + BUTTON PICKING + VIVID 650 nm LASER
+    // =========================================================================
+    const canvas = document.getElementById("gl-canvas");
+    const gl = canvas.getContext("webgl", { antialias: true, preserveDrawingBuffer: true, alpha: true });
+    if (!gl) {
+      const eb = document.getElementById("error-banner");
+      eb.style.display = "block";
+      eb.textContent = "Tu navegador no soporta WebGL. Por favor habilita la aceleración de hardware o abre esta página en Chrome, Safari o Edge actualizado.";
+      throw new Error("WebGL unavailable");
+    }
+
+    function compileShader(type, src) {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        throw new Error(gl.getShaderInfoLog(sh));
+      }
+      return sh;
+    }
+
+    function createProgram(vsSrc, fsSrc) {
+      const p = gl.createProgram();
+      gl.attachShader(p, compileShader(gl.VERTEX_SHADER, vsSrc));
+      gl.attachShader(p, compileShader(gl.FRAGMENT_SHADER, fsSrc));
+      gl.linkProgram(p);
+      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+        throw new Error(gl.getProgramInfoLog(p));
+      }
+      return p;
+    }
+
+    const solidProg = createProgram(
+      `
+      attribute vec3 aPos;
+      attribute vec3 aNorm;
+      uniform mat4 uProj;
+      uniform mat4 uView;
+      uniform mat4 uModel;
+      uniform mat3 uNormMat;
+      varying vec3 vNorm;
+      varying vec3 vWorldPos;
+      void main() {
+        vec4 wp = uModel * vec4(aPos, 1.0);
+        vWorldPos = wp.xyz;
+        vNorm = normalize(uNormMat * aNorm);
+        gl_Position = uProj * uView * wp;
+      }
+      `,
+      `
+      precision mediump float;
+      varying vec3 vNorm;
+      varying vec3 vWorldPos;
+      uniform vec3 uColor;
+      uniform float uAlpha;
+      uniform float uEmissive;
+      uniform float uMode; // 0=pencil, 1=ref, 3=cad
+      uniform float uPencil;
+      uniform float uHatch;
+      uniform vec3 uEye;
+
+      float hash12(vec2 p) {
+        vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+        p3 += dot(p3, p3.yzx + 33.33);
+        return fract((p3.x + p3.y) * p3.z);
+      }
+
+      void main() {
+        vec3 N = normalize(vNorm);
+        if (!gl_FrontFacing) N = -N;
+        vec3 L1 = normalize(vec3(-0.45, 0.82, 0.55));
+        vec3 L2 = normalize(vec3(0.65, 0.35, -0.45));
+        float nd1 = max(dot(N, L1), 0.0);
+        float nd2 = max(dot(N, L2), 0.0);
+
+        vec3 col = uColor;
+        if (uMode > 2.5) {
+          col = uColor;
+        } else if (uMode < 0.5) {
+          float tone = mix(0.84, 1.03, smoothstep(0.0, 0.95, nd1 * 0.85 + nd2 * 0.25));
+          col = uColor * tone;
+          if (uHatch > 0.5 && nd1 < 0.36 && uPencil > 0.02) {
+            float diag1 = abs(sin((gl_FragCoord.x + gl_FragCoord.y) * 0.92));
+            float diag2 = abs(sin((gl_FragCoord.x - gl_FragCoord.y) * 0.92));
+            float hline = smoothstep(0.86, 0.99, diag1) * 0.55 + (nd1 < 0.14 ? smoothstep(0.90, 0.99, diag2) * 0.35 : 0.0);
+            float shadowWeight = smoothstep(0.36, 0.0, nd1);
+            col -= vec3(hline * shadowWeight * uPencil * 0.14);
+          }
+          float grain = (hash12(floor(gl_FragCoord.xy)) - 0.5) * 0.028 * uPencil;
+          col += vec3(grain);
+        } else {
+          col = uColor * mix(0.88, 1.04, nd1 * 0.75 + 0.25);
+        }
+
+        if (uEmissive > 0.5) {
+          col = mix(col, uColor * 1.18, 0.90);
+        }
+        gl_FragColor = vec4(clamp(col, 0.0, 1.0), uAlpha);
+      }
+      `
+    );
+
+    const lineProg = createProgram(
+      `
+      attribute vec3 aPos;
+      uniform mat4 uProj;
+      uniform mat4 uView;
+      uniform mat4 uModel;
+      uniform vec2 uJitter;
+      void main() {
+        vec4 clip = uProj * uView * uModel * vec4(aPos, 1.0);
+        clip.xy += uJitter * clip.w;
+        gl_Position = clip;
+      }
+      `,
+      `
+      precision mediump float;
+      uniform vec3 uColor;
+      uniform float uAlpha;
+      void main() {
+        gl_FragColor = vec4(uColor, uAlpha);
+      }
+      `
+    );
+
+    const pickProg = createProgram(
+      `
+      attribute vec3 aPos;
+      uniform mat4 uProj;
+      uniform mat4 uView;
+      uniform mat4 uModel;
+      void main() {
+        gl_Position = uProj * uView * uModel * vec4(aPos, 1.0);
+      }
+      `,
+      `
+      precision mediump float;
+      uniform vec3 uPickColor;
+      void main() {
+        gl_FragColor = vec4(uPickColor, 1.0);
+      }
+      `
+    );
+
+    function ensureGPUBuffers(geo) {
+      if (geo._gpu) return geo._gpu;
+      const posBuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, geo.positions, gl.STATIC_DRAW);
+
+      const normBuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, normBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, geo.normals, gl.STATIC_DRAW);
+
+      const creaseBuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, creaseBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, geo.creaseEdges, gl.STATIC_DRAW);
+
+      const silBuf = gl.createBuffer();
+      geo._gpu = {
+        posBuf,
+        normBuf,
+        creaseBuf,
+        creaseVerts: geo.creaseEdges.length / 3,
+        silBuf,
+        silVerts: 0
+      };
+      return geo._gpu;
+    }
+
+    function updateSilhouetteBuffer(geo, modelMat, eyeWorld, viewDirWorld, isOrtho) {
+      const gpu = ensureGPUBuffers(geo);
+      if (!geo.smoothEdges || geo.smoothEdges.length === 0) {
+        gpu.silVerts = 0;
+        return null;
+      }
+      const m0 = modelMat[0], m1 = modelMat[1], m2 = modelMat[2];
+      const m4 = modelMat[4], m5 = modelMat[5], m6 = modelMat[6];
+      const m8 = modelMat[8], m9 = modelMat[9], m10 = modelMat[10];
+      const tx = modelMat[12], ty = modelMat[13], tz = modelMat[14];
+
+      let vx, vy, vz, ex, ey, ez;
+      if (isOrtho) {
+        const dx = -viewDirWorld[0], dy = -viewDirWorld[1], dz = -viewDirWorld[2];
+        vx = m0 * dx + m1 * dy + m2 * dz;
+        vy = m4 * dx + m5 * dy + m6 * dz;
+        vz = m8 * dx + m9 * dy + m10 * dz;
+      } else {
+        const dx = eyeWorld[0] - tx, dy = eyeWorld[1] - ty, dz = eyeWorld[2] - tz;
+        ex = m0 * dx + m1 * dy + m2 * dz;
+        ey = m4 * dx + m5 * dy + m6 * dz;
+        ez = m8 * dx + m9 * dy + m10 * dz;
+      }
+
+      const out = [];
+      const se = geo.smoothEdges;
+      for (let i = 0; i < se.length; i++) {
+        const edge = se[i];
+        let toCamX, toCamY, toCamZ;
+        if (isOrtho) {
+          toCamX = vx; toCamY = vy; toCamZ = vz;
+        } else {
+          const mx = (edge.p0[0] + edge.p1[0]) * 0.5;
+          const my = (edge.p0[1] + edge.p1[1]) * 0.5;
+          const mz = (edge.p0[2] + edge.p1[2]) * 0.5;
+          toCamX = ex - mx; toCamY = ey - my; toCamZ = ez - mz;
+        }
+        const d0 = edge.n0[0] * toCamX + edge.n0[1] * toCamY + edge.n0[2] * toCamZ;
+        const d1 = edge.n1[0] * toCamX + edge.n1[1] * toCamY + edge.n1[2] * toCamZ;
+        if ((d0 >= 0 && d1 < 0) || (d1 >= 0 && d0 < 0)) {
+          out.push(edge.p0[0], edge.p0[1], edge.p0[2], edge.p1[0], edge.p1[1], edge.p1[2]);
+        }
+      }
+      const arr = new Float32Array(out);
+      gl.bindBuffer(gl.ARRAY_BUFFER, gpu.silBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, arr, gl.DYNAMIC_DRAW);
+      gpu.silVerts = out.length / 3;
+      return arr;
+    }
+
+    // Unit cylinder along +Z [0..1] for vivid depth-occluded 650 nm laser beam
+    const unitBeamGeo = buildGeometryFromTriangles(createCylinderTris(0, 0, 0.5, 1, 1, 1, 14, "z"), 40);
+    const beamDynBuf = gl.createBuffer();
+
+    function buildSegmentBeamMatrix(seg, radius) {
+      if (!seg || seg.length < 6) return null;
+      const p0 = [seg[0], seg[1], seg[2]];
+      const p1 = [seg[3], seg[4], seg[5]];
+      const d = V3.sub(p1, p0);
+      const len = V3.len(d);
+      if (len < 0.05) return null;
+      const ez = V3.scale(d, 1 / len);
+      const up = Math.abs(ez[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+      const ex = V3.norm(V3.cross(up, ez));
+      const ey = V3.cross(ez, ex);
+      return M4.fromBasis(V3.scale(ex, radius), V3.scale(ey, radius), d, p0);
+    }
+
+    let pickFbo = null, pickTex = null, pickDepth = null, pickW = 0, pickH = 0;
+    function ensurePickBuffer(w, h) {
+      if (pickFbo && pickW === w && pickH === h) return;
+      if (pickFbo) {
+        gl.deleteFramebuffer(pickFbo);
+        gl.deleteTexture(pickTex);
+        gl.deleteRenderbuffer(pickDepth);
+      }
+      pickW = w; pickH = h;
+      pickTex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, pickTex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+      pickDepth = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, pickDepth);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h);
+
+      pickFbo = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, pickFbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, pickTex, 0);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, pickDepth);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+
+    function drawPaperOverlay() {
+      const pCanvas = document.getElementById("paper-grain-overlay");
+      const wrap = document.getElementById("viewport-wrap");
+      const rect = wrap.getBoundingClientRect();
+      const w = Math.max(1, Math.floor(rect.width));
+      const h = Math.max(1, Math.floor(rect.height));
+      if (pCanvas.width !== w || pCanvas.height !== h) {
+        pCanvas.width = w;
+        pCanvas.height = h;
+      }
+      const ctx = pCanvas.getContext("2d");
+      ctx.clearRect(0, 0, w, h);
+      const t = THEMES[state.theme] || THEMES.pencil;
+      const op = state.paperOpacity / 100;
+      pCanvas.style.opacity = t.isLineOnly ? "0" : String(op * 0.45);
+      if (op <= 0.01 || t.isLineOnly) return;
+
+      if (!drawPaperOverlay._tile) {
+        const tile = document.createElement("canvas");
+        tile.width = 128; tile.height = 128;
+        const tctx = tile.getContext("2d");
+        const img = tctx.createImageData(128, 128);
+        let seed = 42197;
+        for (let i = 0; i < img.data.length; i += 4) {
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          const n = (seed >>> 24) & 255;
+          const v = 236 + Math.floor((n / 255) * 19);
+          img.data[i] = v;
+          img.data[i + 1] = v - 2;
+          img.data[i + 2] = v - 6;
+          img.data[i + 3] = 255;
+        }
+        tctx.putImageData(img, 0, 0);
+        tctx.strokeStyle = "rgba(110, 102, 86, 0.08)";
+        tctx.lineWidth = 0.6;
+        for (let k = 0; k < 28; k++) {
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          const x = seed % 128;
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          const y = seed % 128;
+          tctx.beginPath();
+          tctx.moveTo(x, y);
+          tctx.lineTo(x + 9, y + (k % 2 ? 3 : -3));
+          tctx.stroke();
+        }
+        drawPaperOverlay._tile = tile;
+      }
+      const pat = ctx.createPattern(drawPaperOverlay._tile, "repeat");
+      ctx.fillStyle = pat;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    function getPortraitFit(aspect) {
+      return aspect < 1.55 ? (1.55 / Math.max(0.42, aspect)) : 1;
+    }
+
+    function getCameraData(aspect) {
+      const { az, el, dist, orthoScale, target } = state.cam;
+      const portraitFit = getPortraitFit(aspect);
+      const effDist = dist * portraitFit;
+      const effOrthoScale = orthoScale * portraitFit;
+      const cosEl = Math.cos(el);
+      const eye = [
+        target[0] + effDist * cosEl * Math.sin(az),
+        target[1] + effDist * Math.sin(el),
+        target[2] + effDist * cosEl * Math.cos(az)
+      ];
+      const viewDir = V3.norm(V3.sub(target, eye));
+      const view = M4.lookAt(eye, target, [0, 1, 0]);
+      const oNear = Math.min(-600, effDist - 1400);
+      const oFar = Math.max(2200, effDist + 1400);
+      const proj = state.ortho
+        ? M4.ortho(-effOrthoScale * aspect, effOrthoScale * aspect, -effOrthoScale, effOrthoScale, oNear, oFar)
+        : M4.perspective((34 * Math.PI) / 180, aspect, 15, Math.max(6000, effDist + 2500));
+      return { eye, target, viewDir, view, proj };
+    }
+
+    let sceneComponents = [];
+    let needsRender = true;
+    let camAnim = null;
+
+    function requestRender() {
+      needsRender = true;
+    }
+
+    function renderFrame() {
+      const wrap = document.getElementById("viewport-wrap");
+      const rect = wrap.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.max(2, Math.floor(rect.width * dpr));
+      const h = Math.max(2, Math.floor(rect.height * dpr));
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+
+      const theme = THEMES[state.theme] || THEMES.pencil;
+      wrap.style.background = theme.bg;
+      const bgRgb = hexToRgb01(theme.bg);
+
+      gl.viewport(0, 0, w, h);
+      gl.clearColor(bgRgb[0], bgRgb[1], bgRgb[2], 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LEQUAL);
+
+      const aspect = w / h;
+      const camData = getCameraData(aspect);
+      const modeNum = state.theme === "pencil" ? 0 : state.theme === "reference" ? 1 : 3;
+
+      const opaqueItems = [];
+      const transItems = [];
+      const edgeItems = [];
+
+      for (let ci = 0; ci < sceneComponents.length; ci++) {
+        const comp = sceneComponents[ci];
+        const ps = getPartState(comp.id);
+        if (!ps.visible) continue;
+
+        for (let mi = 0; mi < comp.meshes.length; mi++) {
+          const item = comp.meshes[mi];
+          if (item.isGrid && !state.showGrid) continue;
+          if (item.role === "ledGlow" && !isDetectorLedLit(comp.id)) continue;
+          const model = computeModelMatrix(comp, item);
+          const normMat = M4.normalMatrix3(model);
+          const fillCol = hexToRgb01(getMeshColor(comp.id, item.role, item));
+          const edgeCol = hexToRgb01(item.isGrid ? getMeshColor(comp.id, "grid", item) : ps.edge);
+
+          if (item.geo.triCount > 0) {
+            const drawRec = { comp, item, model, normMat, fillCol, ci };
+            if (item.transparent) transItems.push(drawRec);
+            else opaqueItems.push(drawRec);
+          }
+          edgeItems.push({ comp, item, model, edgeCol });
+        }
+      }
+
+      // Pass 1: Opaque Solids
+      gl.useProgram(solidProg);
+      gl.uniformMatrix4fv(gl.getUniformLocation(solidProg, "uProj"), false, camData.proj);
+      gl.uniformMatrix4fv(gl.getUniformLocation(solidProg, "uView"), false, camData.view);
+      gl.uniform1f(gl.getUniformLocation(solidProg, "uMode"), modeNum);
+      gl.uniform1f(gl.getUniformLocation(solidProg, "uPencil"), state.pencilIntensity / 100);
+      gl.uniform1f(gl.getUniformLocation(solidProg, "uHatch"), state.hatch ? 1.0 : 0.0);
+      gl.uniform3fv(gl.getUniformLocation(solidProg, "uEye"), new Float32Array(camData.eye));
+
+      const aPosLoc = gl.getAttribLocation(solidProg, "aPos");
+      const aNormLoc = gl.getAttribLocation(solidProg, "aNorm");
+      gl.enableVertexAttribArray(aPosLoc);
+      gl.enableVertexAttribArray(aNormLoc);
+
+      gl.enable(gl.POLYGON_OFFSET_FILL);
+      gl.polygonOffset(0.25, 1.0);
+      gl.disable(gl.BLEND);
+      gl.disable(gl.CULL_FACE);
+
+      for (const rec of opaqueItems) {
+        const gpu = ensureGPUBuffers(rec.item.geo);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.posBuf);
+        gl.vertexAttribPointer(aPosLoc, 3, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normBuf);
+        gl.vertexAttribPointer(aNormLoc, 3, gl.FLOAT, false, 0, 0);
+
+        gl.uniformMatrix4fv(gl.getUniformLocation(solidProg, "uModel"), false, rec.model);
+        gl.uniformMatrix3fv(gl.getUniformLocation(solidProg, "uNormMat"), false, rec.normMat);
+        gl.uniform3fv(gl.getUniformLocation(solidProg, "uColor"), new Float32Array(rec.fillCol));
+        gl.uniform1f(gl.getUniformLocation(solidProg, "uAlpha"), 1.0);
+        gl.uniform1f(gl.getUniformLocation(solidProg, "uEmissive"), (rec.item.role === "led" && isDetectorLedLit(rec.comp.id)) ? 1.0 : 0.0);
+        gl.drawArrays(gl.TRIANGLES, 0, rec.item.geo.triCount * 3);
+      }
+
+      // Draw vivid 650 nm laser core cylinder in opaque pass so optics occlude it naturally
+      const beam = state.showBeam ? getBeamSegments() : { enabled: false };
+      const beamCol = hexToRgb01(theme.beamColor);
+      if (beam.enabled && beam.main.length > 0) {
+        const beamGpu = ensureGPUBuffers(unitBeamGeo);
+        gl.bindBuffer(gl.ARRAY_BUFFER, beamGpu.posBuf);
+        gl.vertexAttribPointer(aPosLoc, 3, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, beamGpu.normBuf);
+        gl.vertexAttribPointer(aNormLoc, 3, gl.FLOAT, false, 0, 0);
+        gl.uniform3fv(gl.getUniformLocation(solidProg, "uColor"), new Float32Array(beamCol));
+        gl.uniform1f(gl.getUniformLocation(solidProg, "uAlpha"), 1.0);
+        gl.uniform1f(gl.getUniformLocation(solidProg, "uEmissive"), 1.0);
+
+        const beamEntries = [
+          { seg: beam.main, radius: 0.72 },
+          { seg: beam.transmitted, radius: beam.isSplit ? 0.48 : 0.72 },
+          { seg: beam.reflected, radius: beam.isSplit ? 0.48 : 0.72 }
+        ];
+        for (const entry of beamEntries) {
+          const bm = buildSegmentBeamMatrix(entry.seg, entry.radius);
+          if (!bm) continue;
+          gl.uniformMatrix4fv(gl.getUniformLocation(solidProg, "uModel"), false, bm);
+          gl.uniformMatrix3fv(gl.getUniformLocation(solidProg, "uNormMat"), false, M4.normalMatrix3(bm));
+          gl.drawArrays(gl.TRIANGLES, 0, unitBeamGeo.triCount * 3);
+        }
+      }
+
+      // Pass 2: Crease & Silhouette Edges
+      gl.disable(gl.POLYGON_OFFSET_FILL);
+      gl.disable(gl.CULL_FACE);
+      gl.useProgram(lineProg);
+      gl.uniformMatrix4fv(gl.getUniformLocation(lineProg, "uProj"), false, camData.proj);
+      gl.uniformMatrix4fv(gl.getUniformLocation(lineProg, "uView"), false, camData.view);
+      const lPosLoc = gl.getAttribLocation(lineProg, "aPos");
+      gl.enableVertexAttribArray(lPosLoc);
+
+      const pencilFrac = (state.theme === "pencil") ? (state.pencilIntensity / 100) : 0;
+      const linePasses = pencilFrac > 0.08
+        ? [{ j: [0, 0], a: 0.92 }, { j: [0.65 * pencilFrac / w * 2, 0.45 * pencilFrac / h * 2], a: 0.28 * pencilFrac }]
+        : [{ j: [0, 0], a: 1.0 }];
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.lineWidth(Math.max(1, state.strokeWidth));
+
+      for (const rec of edgeItems) {
+        if (rec.item.transparent) continue;
+        const gpu = ensureGPUBuffers(rec.item.geo);
+        updateSilhouetteBuffer(rec.item.geo, rec.model, camData.eye, camData.viewDir, state.ortho);
+
+        gl.uniformMatrix4fv(gl.getUniformLocation(lineProg, "uModel"), false, rec.model);
+        gl.uniform3fv(gl.getUniformLocation(lineProg, "uColor"), new Float32Array(rec.edgeCol));
+
+        for (const lp of linePasses) {
+          gl.uniform2fv(gl.getUniformLocation(lineProg, "uJitter"), new Float32Array(lp.j));
+          gl.uniform1f(gl.getUniformLocation(lineProg, "uAlpha"), rec.item.isGrid ? lp.a * 0.58 : lp.a);
+          if (gpu.creaseVerts > 0) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.creaseBuf);
+            gl.vertexAttribPointer(lPosLoc, 3, gl.FLOAT, false, 0, 0);
+            gl.drawArrays(gl.LINES, 0, gpu.creaseVerts);
+          }
+          if (gpu.silVerts > 0) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.silBuf);
+            gl.vertexAttribPointer(lPosLoc, 3, gl.FLOAT, false, 0, 0);
+            gl.drawArrays(gl.LINES, 0, gpu.silVerts);
+          }
+        }
+      }
+
+      // Pass 3: 650 nm Laser Centerline (ensures crisp visibility at far zoom)
+      if (beam.enabled && beam.main.length > 0) {
+        const ident = M4.ident();
+        gl.uniformMatrix4fv(gl.getUniformLocation(lineProg, "uModel"), false, ident);
+        gl.uniform2fv(gl.getUniformLocation(lineProg, "uJitter"), new Float32Array([0, 0]));
+        gl.uniform3fv(gl.getUniformLocation(lineProg, "uColor"), new Float32Array(beamCol));
+
+        const drawBeamSeg = (seg, alpha) => {
+          if (!seg || seg.length === 0) return;
+          gl.uniform1f(gl.getUniformLocation(lineProg, "uAlpha"), Math.max(0.24, alpha));
+          gl.bindBuffer(gl.ARRAY_BUFFER, beamDynBuf);
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(seg), gl.DYNAMIC_DRAW);
+          gl.vertexAttribPointer(lPosLoc, 3, gl.FLOAT, false, 0, 0);
+          gl.drawArrays(gl.LINES, 0, seg.length / 3);
+        };
+        const branchAlpha = beam.isSplit ? 0.65 : 0.98;
+        drawBeamSeg(beam.main, 0.98);
+        drawBeamSeg(beam.transmitted, branchAlpha);
+        drawBeamSeg(beam.reflected, branchAlpha);
+      }
+
+      // Pass 4: Active LED Halos
+      gl.depthMask(false);
+      gl.useProgram(solidProg);
+      gl.enable(gl.CULL_FACE);
+
+      for (const rec of transItems) {
+        const gpu = ensureGPUBuffers(rec.item.geo);
+        if (rec.item.doubleSided) gl.disable(gl.CULL_FACE);
+        else gl.enable(gl.CULL_FACE);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.posBuf);
+        gl.vertexAttribPointer(aPosLoc, 3, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normBuf);
+        gl.vertexAttribPointer(aNormLoc, 3, gl.FLOAT, false, 0, 0);
+        gl.uniformMatrix4fv(gl.getUniformLocation(solidProg, "uModel"), false, rec.model);
+        gl.uniformMatrix3fv(gl.getUniformLocation(solidProg, "uNormMat"), false, rec.normMat);
+        gl.uniform3fv(gl.getUniformLocation(solidProg, "uColor"), new Float32Array(rec.fillCol));
+        gl.uniform1f(gl.getUniformLocation(solidProg, "uAlpha"), rec.item.alpha || 0.45);
+        gl.uniform1f(gl.getUniformLocation(solidProg, "uEmissive"), rec.item.role === "ledGlow" ? 1.0 : 0.0);
+        gl.drawArrays(gl.TRIANGLES, 0, rec.item.geo.triCount * 3);
+      }
+      gl.depthMask(true);
+      gl.disable(gl.CULL_FACE);
+      gl.disable(gl.BLEND);
+
+      drawPaperOverlay();
+      updateOverlayLabels(camData, rect.width, rect.height);
+    }
+
+    function projectPoint3D(pt, camData, W, H) {
+      const vp = M4.mul(camData.proj, camData.view);
+      const c = M4.transformPoint(vp, pt);
+      if (Math.abs(c[3]) < 1e-6) return null;
+      const nx = c[0] / c[3], ny = c[1] / c[3];
+      return {
+        x: (nx * 0.5 + 0.5) * W,
+        y: (0.5 - ny * 0.5) * H
+      };
+    }
+
+    function escapeXml(str) {
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function getLabelItems(camData, W, H) {
+      if (!state.showLabels) return [];
+      const gapShift = (state.gapMm - 170) / 2;
+      const isNarrow = W < 540;
+
+      const modBounds = {
+        alice: { minX: W, minY: H, maxX: 0, maxY: 0 },
+        bob:   { minX: W, minY: H, maxX: 0, maxY: 0 }
+      };
+      for (const comp of sceneComponents) {
+        if (!getPartState(comp.id).visible) continue;
+        const mb = modBounds[comp.module];
+        if (!mb) continue;
+        for (const item of comp.meshes) {
+          if (!item.geo.bbox || item.isGrid) continue;
+          const [x0, y0, z0, x1, y1, z1] = item.geo.bbox;
+          const m = computeModelMatrix(comp, item);
+          const corners = [
+            [x0, y0, z0], [x1, y0, z0], [x0, y1, z0], [x1, y1, z0],
+            [x0, y0, z1], [x1, y0, z1], [x0, y1, z1], [x1, y1, z1]
+          ];
+          for (const pt of corners) {
+            const wp = M4.transformPoint(m, pt);
+            const sp = projectPoint3D(wp, camData, W, H);
+            if (sp) {
+              if (sp.x < mb.minX) mb.minX = sp.x;
+              if (sp.x > mb.maxX) mb.maxX = sp.x;
+              if (sp.y < mb.minY) mb.minY = sp.y;
+              if (sp.y > mb.maxY) mb.maxY = sp.y;
+            }
+          }
+        }
+      }
+
+      const items = [];
+      for (const comp of sceneComponents) {
+        if (!comp.shortLabel || !comp.labelPos) continue;
+        const ps = getPartState(comp.id);
+        if (!ps.visible) continue;
+        const shiftZ = comp.module === "alice" ? -gapShift : gapShift;
+        const anchor3D = [
+          comp.labelPos[0],
+          comp.labelPos[1],
+          comp.labelPos[2] + shiftZ
+        ];
+        const p0 = projectPoint3D(anchor3D, camData, W, H);
+        if (!p0) continue;
+        const mb = modBounds[comp.module];
+        const midY = (mb.minY + mb.maxY) * 0.54;
+        const forceBottom = comp.id === "alice-stepper" || comp.id === "bob-stepper" ||
+          comp.id === "alice-box" || comp.id === "bob-box" ||
+          comp.id === "bob-det1" || comp.id === "bb-alice";
+        const isTop = forceBottom ? false : (p0.y <= midY + 12);
+        items.push({
+          id: comp.id,
+          text: comp.shortLabel,
+          x0: p0.x,
+          y0: p0.y,
+          x1: p0.x,
+          y1: isTop ? mb.minY - 26 : mb.maxY + 28,
+          lane: isTop ? "top" : "bottom",
+          module: comp.module
+        });
+      }
+
+      const charW = isNarrow ? 5.7 : 6.3;
+      const padX = isNarrow ? 12 : 16;
+      const pillH = isNarrow ? 19 : 21;
+      const rowStep = isNarrow ? 24 : Math.max(25, H * 0.032);
+      const minTopY = Math.max(isNarrow ? 74 : 78, H * 0.088);
+      const maxBotY = H - Math.max(isNarrow ? 58 : 64, H * 0.072);
+
+      for (const mod of ["alice", "bob"]) {
+        const mb = modBounds[mod];
+        for (const lane of ["top", "bottom"]) {
+          const group = items.filter(it => it.module === mod && it.lane === lane);
+          group.sort((a, b) => a.x0 - b.x0);
+          if (group.length === 0) continue;
+          const n = group.length;
+          const margin = isNarrow ? 52 : 85;
+          const spanMin = Math.max(margin, mb.minX - (isNarrow ? 10 : 24));
+          const spanMax = Math.min(W - margin, mb.maxX + (isNarrow ? 10 : 24));
+          for (let i = 0; i < n; i++) {
+            const it = group[i];
+            const frac = n === 1 ? 0.5 : i / (n - 1);
+            it.anchor = "middle";
+            it.pillW = Math.max(54, it.text.length * charW + padX);
+            it.pillH = pillH;
+            it.halfW = it.pillW * 0.5;
+            const rawX1 = it.x0 * 0.45 + (spanMin + frac * (spanMax - spanMin)) * 0.55;
+            it.x1 = Math.max(it.halfW + 8, Math.min(W - it.halfW - 8, rawX1));
+            it.y1 = lane === "top"
+              ? Math.max(minTopY, mb.minY - 24 - (i % 2) * rowStep)
+              : Math.min(maxBotY, mb.maxY + 26 + (i % 2) * rowStep);
+          }
+          for (let pass = 0; pass < 8; pass++) {
+            for (let i = 0; i < n; i++) {
+              for (let j = i + 1; j < n; j++) {
+                const a = group[i], b = group[j];
+                const overlapX = (a.halfW + b.halfW + 8) - Math.abs(b.x1 - a.x1);
+                const overlapY = rowStep - Math.abs(b.y1 - a.y1);
+                if (overlapX > 0 && overlapY > 0) {
+                  if (lane === "top") {
+                    if (a.y1 <= b.y1) a.y1 = Math.max(minTopY - 8, a.y1 - overlapY * 0.95);
+                    else b.y1 = Math.max(minTopY - 8, b.y1 - overlapY * 0.95);
+                  } else {
+                    if (a.y1 >= b.y1) a.y1 = Math.min(maxBotY, a.y1 + overlapY * 0.95);
+                    else b.y1 = Math.min(maxBotY, b.y1 + overlapY * 0.95);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        const modItems = items.filter(it => it.module === mod);
+        const topY = modItems.length > 0 ? Math.min(...modItems.map(it => it.y1)) : mb.minY;
+        const hdrText = mod === "alice" ? "MÓDULO ALICE (Emisor)" : "MÓDULO BOB (Receptor)";
+        const hdrHalf = Math.max(76, hdrText.length * (isNarrow ? 6.0 : 6.8) * 0.5 + 12);
+        const hx = Math.max(hdrHalf + 8, Math.min(W - hdrHalf - 8, (mb.minX + mb.maxX) * 0.5));
+        const hy = Math.max(isNarrow ? 54 : 58, topY - (isNarrow ? 24 : 28));
+        items.push({
+          id: `hdr-${mod}`,
+          text: hdrText,
+          x0: hx, y0: hy, x1: hx, y1: hy,
+          pillW: hdrHalf * 2,
+          pillH: isNarrow ? 20 : 22,
+          module: mod,
+          isHeader: true
+        });
+      }
+      return items;
+    }
+
+    function updateOverlayLabels(camData, W, H) {
+      const svg = document.getElementById("label-overlay");
+      if (!svg) return;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.setAttribute("aria-hidden", state.showLabels ? "false" : "true");
+      if (!state.showLabels) {
+        svg.innerHTML = "";
+        return;
+      }
+      const items = getLabelItems(camData, W, H);
+      const isNarrow = W < 540;
+      const bgHalo = (THEMES[state.theme] || THEMES.pencil).bg;
+      let html = "";
+      for (const it of items) {
+        const safeText = escapeXml(it.text);
+        if (it.isHeader) {
+          const pw = it.pillW || 170;
+          const ph = it.pillH || 22;
+          const rx = it.x1 - pw * 0.5;
+          const ry = it.y1 - ph * 0.5;
+          const tint = it.module === "alice" ? "rgba(220,234,242,0.92)" : "rgba(220,236,228,0.92)";
+          const stroke = it.module === "alice" ? "rgba(45,100,128,0.45)" : "rgba(46,111,86,0.45)";
+          html += `<rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${pw.toFixed(1)}" height="${ph}" rx="${(ph / 2).toFixed(1)}" fill="${tint}" stroke="${stroke}" stroke-width="1"/>`;
+          html += `<text x="${it.x1.toFixed(1)}" y="${(it.y1 + (isNarrow ? 3.5 : 4)).toFixed(1)}" font-family="Inter, system-ui, sans-serif" font-size="${isNarrow ? 10 : 11.5}" font-weight="700" fill="#1F2421" text-anchor="middle">${safeText}</text>`;
+        } else {
+          const pw = it.pillW || 110;
+          const ph = it.pillH || 20;
+          const pillCenterY = it.lane === "top" ? it.y1 - ph * 0.5 : it.y1 + ph * 0.5;
+          const rx = it.x1 - pw * 0.5;
+          const ry = pillCenterY - ph * 0.5;
+          const lineEndY = it.lane === "top" ? ry + ph : ry;
+          const strokeCol = it.module === "alice" ? "rgba(45,100,128,0.36)" : "rgba(46,111,86,0.36)";
+          html += `<polyline points="${it.x0.toFixed(1)},${it.y0.toFixed(1)} ${it.x1.toFixed(1)},${lineEndY.toFixed(1)}" fill="none" stroke="${bgHalo}" stroke-width="2.8" stroke-linecap="round"/>`;
+          html += `<polyline points="${it.x0.toFixed(1)},${it.y0.toFixed(1)} ${it.x1.toFixed(1)},${lineEndY.toFixed(1)}" fill="none" stroke="#454B47" stroke-width="1.15" stroke-linecap="round"/>`;
+          html += `<circle cx="${it.x0.toFixed(1)}" cy="${it.y0.toFixed(1)}" r="2.7" fill="#1F2421" stroke="${bgHalo}" stroke-width="1.2"/>`;
+          html += `<rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${pw.toFixed(1)}" height="${ph}" rx="8" fill="rgba(255,255,255,0.92)" stroke="${strokeCol}" stroke-width="1"/>`;
+          html += `<text x="${it.x1.toFixed(1)}" y="${(pillCenterY + (isNarrow ? 3.3 : 3.7)).toFixed(1)}" font-family="Inter, system-ui, sans-serif" font-size="${isNarrow ? 9.5 : 10.8}" font-weight="600" fill="#1F2421" text-anchor="middle">${safeText}</text>`;
+        }
+      }
+      svg.innerHTML = html;
+    }
+
+    function pickComponentAt(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.width, h = canvas.height;
+      const px = Math.floor((clientX - rect.left) * dpr);
+      const py = h - 1 - Math.floor((clientY - rect.top) * dpr);
+      if (px < 0 || py < 0 || px >= w || py >= h) return null;
+
+      ensurePickBuffer(w, h);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, pickFbo);
+      gl.viewport(0, 0, w, h);
+      gl.clearColor(0, 0, 0, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.DEPTH_TEST);
+      gl.disable(gl.BLEND);
+      gl.disable(gl.CULL_FACE);
+
+      const camData = getCameraData(w / h);
+      gl.useProgram(pickProg);
+      gl.uniformMatrix4fv(gl.getUniformLocation(pickProg, "uProj"), false, camData.proj);
+      gl.uniformMatrix4fv(gl.getUniformLocation(pickProg, "uView"), false, camData.view);
+      const pPosLoc = gl.getAttribLocation(pickProg, "aPos");
+      gl.enableVertexAttribArray(pPosLoc);
+
+      for (let ci = 0; ci < sceneComponents.length; ci++) {
+        const comp = sceneComponents[ci];
+        if (!getPartState(comp.id).visible) continue;
+        const idNum = ci + 1;
+
+        for (const item of comp.meshes) {
+          if (item.geo.triCount === 0 || item.role === "ledGlow") continue;
+          const bSide = item.btnMeta ? (item.btnMeta.side === "alice" ? 10 : 20) : 0;
+          const bIdx = item.btnMeta ? (item.btnMeta.idx + 1) : 0;
+          gl.uniform3f(gl.getUniformLocation(pickProg, "uPickColor"), idNum / 255, bIdx / 255, bSide / 255);
+          const gpu = ensureGPUBuffers(item.geo);
+          const model = computeModelMatrix(comp, item);
+          gl.uniformMatrix4fv(gl.getUniformLocation(pickProg, "uModel"), false, model);
+          gl.bindBuffer(gl.ARRAY_BUFFER, gpu.posBuf);
+          gl.vertexAttribPointer(pPosLoc, 3, gl.FLOAT, false, 0, 0);
+          gl.drawArrays(gl.TRIANGLES, 0, item.geo.triCount * 3);
+        }
+      }
+
+      const pixel = new Uint8Array(4);
+      gl.readPixels(px, py, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+      const pickedIdx = pixel[0] - 1;
+      if (pickedIdx >= 0 && pickedIdx < sceneComponents.length) {
+        const btnIndex = pixel[1] > 0 ? (pixel[1] - 1) : -1;
+        const btnSide = pixel[2] >= 18 ? "bob" : (pixel[2] >= 8 ? "alice" : null);
+        return {
+          id: sceneComponents[pickedIdx].id,
+          buttonSide: (btnSide && btnIndex >= 0) ? btnSide : null,
+          buttonIndex: (btnSide && btnIndex >= 0) ? btnIndex : -1
+        };
+      }
+      return null;
+    }
+
+    // =========================================================================
+    // 6. CAMERA PRESETS, THEMES, BB84 DEMO CONTROLLER & UI SYNC
+    // =========================================================================
+    const PRESETS = {
+      "iso-ref": { az: 0.78, el: 0.44, dist: 890, orthoScale: 325, target: [0, 58, 0] },
+      "alice":   { az: 0.68, el: 0.42, dist: 560, orthoScale: 215, target: [10, 68, -275] },
+      "bob":     { az: 0.86, el: 0.44, dist: 580, orthoScale: 225, target: [-15, 68, 275] },
+      "top":     { az: 1.5708, el: 1.54, dist: 1200, orthoScale: 340, target: [0, 50, 0] }
+    };
+
+    function goToPreset(key) {
+      const presetKey = key === "general" ? "iso-ref" : key;
+      const p = PRESETS[presetKey];
+      if (!p) return;
+      document.querySelectorAll("[data-preset]").forEach(btn => {
+        btn.setAttribute("aria-pressed", btn.dataset.preset === presetKey ? "true" : "false");
+      });
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const gapShift = (state.gapMm - 170) / 2;
+      const targetAdj = [...p.target];
+      if (presetKey === "alice") targetAdj[2] -= gapShift;
+      if (presetKey === "bob") targetAdj[2] += gapShift;
+
+      if (reduceMotion) {
+        Object.assign(state.cam, { ...p, target: targetAdj });
+        requestRender();
+        return;
+      }
+      const start = {
+        az: state.cam.az, el: state.cam.el, dist: state.cam.dist,
+        orthoScale: state.cam.orthoScale, target: [...state.cam.target]
+      };
+      camAnim = { start, end: { ...p, target: targetAdj }, t0: performance.now(), dur: 360 };
+    }
+
+    function applyTheme() {
+      const t = THEMES.pencil;
+      state.theme = "pencil";
+      state.paperOpacity = t.defaultPaper;
+      state.pencilIntensity = t.defaultPencil;
+      state.hatch = t.defaultHatch;
+      setStatus(`Estilo visual: ${t.name}`);
+      requestRender();
+    }
+
+    function setStatus(msg) {
+      const el = document.getElementById("status-live");
+      if (el) el.textContent = msg;
+    }
+
+    function updatePhysicsReadout() {
+      const d = Math.round(state.aliceDeg - state.bobDeg);
+      const rad = (d * Math.PI) / 180;
+      const T = Math.round(Math.pow(Math.cos(rad), 2) * 100);
+      const R = 100 - T;
+      const pr = document.getElementById("physics-readout");
+      if (pr) {
+        pr.innerHTML = `<span>Δθ = ${d}°</span><span>T = ${T}%</span><span>R = ${R}%</span>`;
+      }
+      const badge = document.getElementById("result-angle-badge");
+      if (badge) badge.textContent = `Δθ = ${d}°`;
+    }
+
+    let aliceMotorAnim = null;
+    let bobMotorAnim = null;
+    let autoDemoTimers = [];
+    let pressTimers = { alice: null, bob: null };
+
+    function clearAutoDemoTimers() {
+      for (const tid of autoDemoTimers) clearTimeout(tid);
+      autoDemoTimers = [];
+    }
+
+    function syncAutoDemoButton() {
+      const btn = document.getElementById("btn-demo-auto");
+      const label = document.getElementById("btn-demo-auto-label");
+      const icon = document.getElementById("btn-demo-auto-icon");
+      if (!btn || !label || !icon) return;
+      const running = !!state.demo.autoRunning;
+      btn.setAttribute("aria-pressed", running ? "true" : "false");
+      btn.classList.toggle("is-running", running);
+      label.textContent = running ? "Detener Demo" : "Demo Automática";
+      icon.innerHTML = running
+        ? '<rect x="6" y="6" width="12" height="12" rx="2"/>'
+        : '<polygon points="5 3 19 12 5 21 5 3"/>';
+    }
+
+    function stopAutoDemo(silent = false) {
+      clearAutoDemoTimers();
+      const wasRunning = state.demo.autoRunning;
+      state.demo.autoRunning = false;
+      syncAutoDemoButton();
+      if (wasRunning && !silent) {
+        setStatus("Demo automática detenida");
+      }
+    }
+
+    function updateDemoHUD(modeClass, msg) {
+      const banner = document.getElementById("demo-hud-banner");
+      const dot = document.getElementById("demo-dot");
+      const txt = document.getElementById("demo-hud-text");
+      if (!banner || !dot || !txt) return;
+      if (!state.demo.active) {
+        banner.hidden = true;
+        return;
+      }
+      banner.hidden = false;
+      dot.className = `demo-dot ${modeClass || ""}`.trim();
+      txt.textContent = msg;
+    }
+
+    function updateResultCardAndLEDs() {
+      const aSpec = ALICE_BUTTON_SPECS[state.demo.aliceBtnIdx] || { deg: Math.round(state.aliceDeg), base: "+", bit: 0 };
+      const bSpec = BOB_BUTTON_SPECS[state.demo.bobBtnIdx] || { deg: Math.round(state.bobDeg), base: "+" };
+
+      const phaseEl = document.getElementById("result-phase");
+      const expEl = document.getElementById("result-explanation");
+      const bitEl = document.getElementById("result-bit-pill");
+      const det1El = document.getElementById("led-det1");
+      const det2El = document.getElementById("led-det2");
+      const det1Sub = document.getElementById("led-det1-sub");
+      const det2Sub = document.getElementById("led-det2-sub");
+
+      if (state.demo.moving) {
+        phaseEl.className = "result-phase moving";
+        phaseEl.textContent = "Girando stepper… Láser apagado";
+        expEl.textContent = `Alineando polarizadores mecánicos mediante engranajes (Alice → ${aSpec.deg}° • Base ${aSpec.base}, Bob → ${bSpec.deg}° • Base ${bSpec.base}). El pulso láser se disparará al estabilizarse.`;
+        bitEl.className = "result-bit-pill";
+        bitEl.textContent = "Midiendo…";
+        det1El.classList.remove("is-lit");
+        det2El.classList.remove("is-lit");
+        det1Sub.textContent = "Láser apagado";
+        det2Sub.textContent = "Láser apagado";
+        return;
+      }
+
+      const det = state.demo.activeDetector;
+      const d = Math.abs(aSpec.deg - bSpec.deg);
+      const rad = (d * Math.PI) / 180;
+      const T = Math.round(Math.pow(Math.cos(rad), 2) * 100);
+      const R = 100 - T;
+
+      if (state.demo.lastMatch) {
+        phaseEl.className = "result-phase det";
+        phaseEl.textContent = `Bases Coinciden (${aSpec.base})`;
+        expEl.textContent = `Alice (Base ${aSpec.base}, ${aSpec.deg}°) y Bob (Base ${bSpec.base}, ${bSpec.deg}°) coinciden. Ley de Malus: T = ${T}%, R = ${R}%. El haz llega al Detector ${det} (LED verde) y el bit se conserva.`;
+        bitEl.className = "result-bit-pill is-kept";
+        bitEl.textContent = `${state.demo.lastBit} (Conservado en clave)`;
+      } else {
+        phaseEl.className = "result-phase split";
+        phaseEl.textContent = `Bases Distintas (${aSpec.base} ≠ ${bSpec.base})`;
+        expEl.textContent = `Bases conjugadas (Alice ${aSpec.base} y Bob ${bSpec.base}, Δθ = ${d}°): T = ${T}%, R = ${R}%. El haz se divide entre ambos detectores en el PBS; en este pulso se ilumina el Detector ${det} y el bit se descarta.`;
+        bitEl.className = "result-bit-pill is-discarded";
+        bitEl.textContent = "Descartado (-)";
+      }
+
+      const d1Lit = isDetectorLedLit("bob-det1");
+      const d2Lit = isDetectorLedLit("bob-det2");
+      det1El.classList.toggle("is-lit", d1Lit);
+      det2El.classList.toggle("is-lit", d2Lit);
+      det1Sub.textContent = d1Lit ? "LED encendido • Pulso detectado" : "Apagado";
+      det2Sub.textContent = d2Lit ? "LED encendido • Pulso detectado" : "Apagado";
+    }
+
+    function renderReconTable() {
+      const evs = state.demo.events;
+      document.getElementById("recon-count").textContent = `${evs.length} ev.`;
+      const siftedBits = evs.filter(e => e.match).map(e => e.key).join(" ");
+      document.getElementById("sifted-key-value").textContent = siftedBits.length > 0 ? siftedBits : "—";
+
+      const tbody = document.getElementById("recon-tbody");
+      if (evs.length === 0) {
+        tbody.innerHTML = `<tr class="recon-empty"><td colspan="5">Pulsa un botón de Alice/Bob o «Disparar Pulso 650 nm» para registrar eventos.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = evs.map(e => `
+        <tr class="${e.match ? "is-match" : "is-miss"}">
+          <td><strong>#${e.id}</strong></td>
+          <td>${e.aliceBase} (${e.aliceDeg}°)</td>
+          <td>${e.bobBase} (${e.bobDeg}°)</td>
+          <td>${e.match ? "Sí" : "No"}</td>
+          <td><strong>${e.key}</strong></td>
+        </tr>
+      `).join("");
+
+      const wrap = document.getElementById("recon-table-wrap");
+      if (wrap) {
+        wrap.scrollTop = wrap.scrollHeight;
+      }
+    }
+
+    function syncDemoUI() {
+      document.querySelectorAll("[data-demo-alice]").forEach(btn => {
+        const idx = parseInt(btn.dataset.demoAlice, 10);
+        btn.classList.toggle("active", idx === state.demo.aliceBtnIdx);
+      });
+      document.querySelectorAll("[data-demo-bob]").forEach(btn => {
+        const idx = parseInt(btn.dataset.demoBob, 10);
+        btn.classList.toggle("active", idx === state.demo.bobBtnIdx);
+      });
+
+      const aSpec = ALICE_BUTTON_SPECS[state.demo.aliceBtnIdx];
+      const bSpec = BOB_BUTTON_SPECS[state.demo.bobBtnIdx];
+      document.getElementById("demo-alice-badge").textContent = aSpec
+        ? `${aSpec.deg}° • Base ${aSpec.base} • Bit ${aSpec.bit}`
+        : `${Math.round(state.aliceDeg)}°`;
+      document.getElementById("demo-bob-badge").textContent = bSpec
+        ? `Base ${bSpec.base} (${bSpec.deg}°)`
+        : `${Math.round(state.bobDeg)}°`;
+
+      updateResultCardAndLEDs();
+      renderReconTable();
+      syncAutoDemoButton();
+    }
+
+    function fireDemoLaserAndMeasure(options = {}) {
+      if (!state.demo.active) return;
+      const aSpec = ALICE_BUTTON_SPECS[state.demo.aliceBtnIdx] || { deg: Math.round(state.aliceDeg), base: "+", bit: 0 };
+      const bSpec = BOB_BUTTON_SPECS[state.demo.bobBtnIdx] || { deg: Math.round(state.bobDeg), base: "+" };
+      const match = aSpec.base === bSpec.base;
+      const dThetaRad = ((aSpec.deg - bSpec.deg) * Math.PI) / 180;
+      const T = Math.pow(Math.cos(dThetaRad), 2);
+      const det = match
+        ? (T >= 0.5 ? 1 : 2)
+        : (options.forceDetector === 1 || options.forceDetector === 2
+            ? options.forceDetector
+            : (Math.random() < T ? 1 : 2));
+
+      state.demo.moving = false;
+      state.demo.laserOn = true;
+      state.demo.activeDetector = det;
+      state.demo.lastMatch = match;
+      state.demo.lastBit = aSpec.bit;
+      state.demo.lastKey = match ? String(aSpec.bit) : "-";
+
+      if (!options.skipLog) {
+        const nextId = state.demo.events.length + 1;
+        state.demo.events.push({
+          id: nextId,
+          aliceBase: aSpec.base,
+          aliceDeg: aSpec.deg,
+          bobBase: bSpec.base,
+          bobDeg: bSpec.deg,
+          match,
+          key: state.demo.lastKey,
+          detector: det
+        });
+      }
+
+      if (match) {
+        updateDemoHUD("det", `Bases coinciden (${aSpec.base} y ${bSpec.base}) → Detector ${det} (LED verde) • Bit = ${aSpec.bit}`);
+        setStatus(`Pulso 650 nm → Detector ${det} (Bases coinciden • Bit ${aSpec.bit})`);
+      } else {
+        updateDemoHUD("split", `Bases distintas (${aSpec.base} ≠ ${bSpec.base}) → Haz dividido en PBS • Detector ${det} (LED verde) • Descartado (-)`);
+        setStatus(`Pulso 650 nm → Haz dividido en PBS • Detector ${det} (Descartado)`);
+      }
+      updatePhysicsReadout();
+      syncDemoUI();
+      requestRender();
+    }
+
+    function setDemoActive(active) {
+      stopAutoDemo(true);
+      aliceMotorAnim = null;
+      bobMotorAnim = null;
+      state.demo.active = !!active;
+      if (state.demo.active) {
+        state.demo.moving = false;
+        state.demo.laserOn = true;
+        const aIdx = state.demo.aliceBtnIdx >= 0 ? state.demo.aliceBtnIdx : 0;
+        const bIdx = state.demo.bobBtnIdx >= 0 ? state.demo.bobBtnIdx : 0;
+        state.demo.aliceBtnIdx = aIdx;
+        state.demo.bobBtnIdx = bIdx;
+        state.aliceDeg = ALICE_BUTTON_SPECS[aIdx].deg;
+        state.bobDeg = BOB_BUTTON_SPECS[bIdx].deg;
+        fireDemoLaserAndMeasure({ skipLog: true });
+      } else {
+        state.demo.moving = false;
+        state.demo.laserOn = true;
+        state.demo.activeDetector = 0;
+        updateDemoHUD("", "");
+        syncDemoUI();
+        requestRender();
+      }
+    }
+
+    function triggerAliceButton(idx, options = {}) {
+      if (!options.fromAuto) stopAutoDemo(true);
+      const spec = ALICE_BUTTON_SPECS[idx];
+      if (!spec) return;
+      state.demo.active = true;
+      state.demo.aliceBtnIdx = idx;
+      state.demo.alicePressedIdx = idx;
+      if (pressTimers.alice) clearTimeout(pressTimers.alice);
+      pressTimers.alice = setTimeout(() => {
+        state.demo.alicePressedIdx = -1;
+        requestRender();
+      }, 240);
+
+      state.demo.moving = true;
+      state.demo.laserOn = false;
+      state.demo.activeDetector = 0;
+      const startDeg = state.aliceDeg;
+      const dur = options.instant ? 0 : (Math.abs(spec.deg - startDeg) < 1 ? 150 : 620);
+
+      if (dur === 0) {
+        aliceMotorAnim = null;
+        state.aliceDeg = spec.deg;
+        if (!bobMotorAnim) fireDemoLaserAndMeasure(options);
+        else { syncDemoUI(); requestRender(); }
+        return;
+      }
+
+      aliceMotorAnim = {
+        startDeg,
+        endDeg: spec.deg,
+        t0: performance.now(),
+        dur,
+        options
+      };
+      updateDemoHUD("moving", `Girando stepper… Láser apagado (Alice B${idx + 1}: ${spec.deg}°, Base ${spec.base})`);
+      setStatus(`Girando stepper Alice → ${spec.deg}°…`);
+      syncDemoUI();
+      requestRender();
+    }
+
+    function triggerBobButton(idx, options = {}) {
+      if (!options.fromAuto) stopAutoDemo(true);
+      const spec = BOB_BUTTON_SPECS[idx];
+      if (!spec) return;
+      state.demo.active = true;
+      state.demo.bobBtnIdx = idx;
+      state.demo.bobPressedIdx = idx;
+      if (pressTimers.bob) clearTimeout(pressTimers.bob);
+      pressTimers.bob = setTimeout(() => {
+        state.demo.bobPressedIdx = -1;
+        requestRender();
+      }, 240);
+
+      state.demo.moving = true;
+      state.demo.laserOn = false;
+      state.demo.activeDetector = 0;
+      const startDeg = state.bobDeg;
+      const dur = options.instant ? 0 : (Math.abs(spec.deg - startDeg) < 1 ? 150 : 540);
+
+      if (dur === 0) {
+        bobMotorAnim = null;
+        state.bobDeg = spec.deg;
+        if (!aliceMotorAnim) fireDemoLaserAndMeasure(options);
+        else { syncDemoUI(); requestRender(); }
+        return;
+      }
+
+      bobMotorAnim = {
+        startDeg,
+        endDeg: spec.deg,
+        t0: performance.now(),
+        dur,
+        options
+      };
+      updateDemoHUD("moving", `Girando stepper… Láser apagado (Bob Base ${spec.base}: ${spec.deg}°)`);
+      setStatus(`Girando stepper Bob → ${spec.deg}°…`);
+      syncDemoUI();
+      requestRender();
+    }
+
+    const AUTO_INTRO_STEPS = [
+      { alice: 1, bob: 0 }, // +/+ Bit 1
+      { alice: 3, bob: 0 }, // ×/+ Split
+      { alice: 0, bob: 1 }, // +/× Split
+      { alice: 2, bob: 1 }  // ×/× Bit 0
+    ];
+
+    function scheduleNextAutoStep(delayMs = 1900) {
+      if (!state.demo.autoRunning) return;
+      const tid = setTimeout(() => {
+        if (!state.demo.autoRunning) return;
+        const stepIdx = state.demo.autoStepIndex++;
+        let nextA, nextB;
+        if (stepIdx < AUTO_INTRO_STEPS.length) {
+          nextA = AUTO_INTRO_STEPS[stepIdx].alice;
+          nextB = AUTO_INTRO_STEPS[stepIdx].bob;
+        } else {
+          do {
+            nextA = Math.floor(Math.random() * ALICE_BUTTON_SPECS.length);
+            nextB = Math.floor(Math.random() * BOB_BUTTON_SPECS.length);
+          } while (nextA === state.demo.aliceBtnIdx && nextB === state.demo.bobBtnIdx);
+        }
+
+        const needBob = nextB !== state.demo.bobBtnIdx || stepIdx === 0;
+        const needAlice = nextA !== state.demo.aliceBtnIdx || !needBob;
+        if (needBob) triggerBobButton(nextB, { fromAuto: true });
+        if (needAlice) triggerAliceButton(nextA, { fromAuto: true });
+        scheduleNextAutoStep(1900);
+      }, delayMs);
+      autoDemoTimers.push(tid);
+    }
+
+    function runAutoDemoSequence() {
+      clearAutoDemoTimers();
+      state.demo.active = true;
+      state.demo.autoRunning = true;
+      state.demo.autoStepIndex = 0;
+      syncAutoDemoButton();
+      setStatus("Demo automática continua iniciada");
+      scheduleNextAutoStep(60);
+    }
+
+    function startAutoDemo() {
+      runAutoDemoSequence();
+    }
+
+    function toggleAutoDemo() {
+      if (state.demo.autoRunning) {
+        stopAutoDemo(false);
+      } else {
+        startAutoDemo();
+      }
+    }
+
+    // =========================================================================
+    // 7. MULTITOUCH + POINTER INTERACTION (3D BUTTONS ONLY, ZERO EDITING)
+    // =========================================================================
+    function setupCanvasInteraction() {
+      const activePointers = new Map();
+      let dragMode = null;
+      let tapCandidate = null;
+      let lastPinchDist = 0;
+      let lastMidX = 0;
+      let lastMidY = 0;
+
+      function getTwoPointerMetrics() {
+        const vals = activePointers.values();
+        const p1 = vals.next().value;
+        const p2 = vals.next().value;
+        return {
+          dist: Math.hypot(p2.x - p1.x, p2.y - p1.y),
+          midX: (p1.x + p2.x) * 0.5,
+          midY: (p1.y + p2.y) * 0.5
+        };
+      }
+
+      function applyPanDelta(dx, dy) {
+        const rect = canvas.getBoundingClientRect();
+        const aspect = rect.width / Math.max(1, rect.height);
+        const portraitFit = getPortraitFit(aspect);
+        const factor = state.ortho
+          ? ((state.cam.orthoScale * portraitFit) / 360)
+          : ((state.cam.dist * portraitFit) / 900);
+        const { az, el } = state.cam;
+        const cosEl = Math.cos(el), sinEl = Math.sin(el);
+        const sinAz = Math.sin(az), cosAz = Math.cos(az);
+        const xCam = [cosAz, 0, -sinAz];
+        const yCam = [-sinEl * sinAz, cosEl, -sinEl * cosAz];
+        state.cam.target[0] += (-dx * xCam[0] + dy * yCam[0]) * factor;
+        state.cam.target[1] += (-dx * xCam[1] + dy * yCam[1]) * factor;
+        state.cam.target[2] += (-dx * xCam[2] + dy * yCam[2]) * factor;
+      }
+
+      canvas.addEventListener("contextmenu", e => e.preventDefault());
+
+      canvas.addEventListener("pointerdown", e => {
+        try { canvas.setPointerCapture(e.pointerId); } catch {}
+        camAnim = null;
+        activePointers.set(e.pointerId, {
+          x: e.clientX,
+          y: e.clientY,
+          button: e.button,
+          pointerType: e.pointerType
+        });
+
+        if (activePointers.size === 1) {
+          dragMode = (e.button === 2 || e.button === 1 || e.shiftKey) ? "pan" : "orbit";
+          tapCandidate = {
+            pointerId: e.pointerId,
+            movedDist: 0,
+            button: e.button,
+            pointerType: e.pointerType
+          };
+        } else if (activePointers.size === 2) {
+          tapCandidate = null;
+          dragMode = "pinch";
+          const m = getTwoPointerMetrics();
+          lastPinchDist = Math.max(10, m.dist);
+          lastMidX = m.midX;
+          lastMidY = m.midY;
+        } else {
+          tapCandidate = null;
+        }
+      });
+
+      canvas.addEventListener("pointermove", e => {
+        const prev = activePointers.get(e.pointerId);
+        if (!prev) return;
+        const dx = e.clientX - prev.x;
+        const dy = e.clientY - prev.y;
+        prev.x = e.clientX;
+        prev.y = e.clientY;
+
+        if (activePointers.size === 1) {
+          if (tapCandidate && tapCandidate.pointerId === e.pointerId) {
+            tapCandidate.movedDist += Math.hypot(dx, dy);
+          }
+          if (dragMode === "orbit") {
+            state.cam.az -= dx * 0.0065;
+            state.cam.el = Math.max(-1.45, Math.min(1.55, state.cam.el + dy * 0.0065));
+          } else if (dragMode === "pan") {
+            applyPanDelta(dx, dy);
+          }
+          requestRender();
+        } else if (activePointers.size >= 2) {
+          const m = getTwoPointerMetrics();
+          const newDist = Math.max(10, m.dist);
+          const zoomScale = lastPinchDist / newDist;
+          state.cam.dist = Math.max(220, Math.min(2800, state.cam.dist * zoomScale));
+          state.cam.orthoScale = Math.max(95, Math.min(1100, state.cam.orthoScale * zoomScale));
+          applyPanDelta(m.midX - lastMidX, m.midY - lastMidY);
+          lastPinchDist = newDist;
+          lastMidX = m.midX;
+          lastMidY = m.midY;
+          requestRender();
+        }
+      });
+
+      function handlePointerEnd(e, allowTap) {
+        if (allowTap && tapCandidate && tapCandidate.pointerId === e.pointerId &&
+            tapCandidate.movedDist < 8 && (e.pointerType !== "mouse" || e.button === 0)) {
+          const pick = pickComponentAt(e.clientX, e.clientY);
+          if (pick && pick.buttonSide) {
+            if (pick.buttonSide === "alice") triggerAliceButton(pick.buttonIndex);
+            else triggerBobButton(pick.buttonIndex);
+          }
+        }
+
+        activePointers.delete(e.pointerId);
+        if (activePointers.size === 1) {
+          const rem = activePointers.values().next().value;
+          dragMode = (rem.button === 2 || rem.button === 1 || e.shiftKey) ? "pan" : "orbit";
+          tapCandidate = null;
+        } else if (activePointers.size >= 2) {
+          dragMode = "pinch";
+          const m = getTwoPointerMetrics();
+          lastPinchDist = Math.max(10, m.dist);
+          lastMidX = m.midX;
+          lastMidY = m.midY;
+          tapCandidate = null;
+        } else {
+          dragMode = null;
+          tapCandidate = null;
+        }
+      }
+
+      canvas.addEventListener("pointerup", e => handlePointerEnd(e, true));
+      canvas.addEventListener("pointercancel", e => handlePointerEnd(e, false));
+
+      canvas.addEventListener("wheel", e => {
+        e.preventDefault();
+        const scale = Math.exp(e.deltaY * 0.0011);
+        state.cam.dist = Math.max(220, Math.min(2800, state.cam.dist * scale));
+        state.cam.orthoScale = Math.max(95, Math.min(1100, state.cam.orthoScale * scale));
+        requestRender();
+      }, { passive: false });
+    }
+
+    // =========================================================================
+    // 8. UI BINDINGS & ANIMATION LOOP
+    // =========================================================================
+    function initUI() {
+      const panelBtn = document.getElementById("btn-toggle-panel");
+      const sidebar = document.getElementById("control-panel");
+      const workspace = document.getElementById("workspace");
+      if (panelBtn && sidebar && workspace) {
+        panelBtn.addEventListener("click", () => {
+          const collapsed = sidebar.classList.toggle("sidebar-collapsed");
+          workspace.classList.toggle("workspace-collapsed", collapsed);
+          panelBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+          requestRender();
+        });
+      }
+
+      const resetViewBtn = document.getElementById("btn-restaurar-vista");
+      if (resetViewBtn) {
+        resetViewBtn.addEventListener("click", () => {
+          goToPreset("iso-ref");
+          setStatus("Vista general restaurada");
+        });
+      }
+
+      const labelsBtn = document.getElementById("btn-labels-toggle");
+      if (labelsBtn) {
+        labelsBtn.addEventListener("click", () => {
+          state.showLabels = !state.showLabels;
+          labelsBtn.setAttribute("aria-pressed", state.showLabels ? "true" : "false");
+          setStatus(state.showLabels ? "Etiquetas de componentes activadas" : "Etiquetas ocultas");
+          requestRender();
+        });
+      }
+
+      const orthoBtn = document.getElementById("btn-ortho-toggle");
+      if (orthoBtn) {
+        orthoBtn.addEventListener("click", () => {
+          state.ortho = !state.ortho;
+          orthoBtn.setAttribute("aria-pressed", state.ortho ? "true" : "false");
+          orthoBtn.textContent = state.ortho ? "Ortográfica" : "Perspectiva";
+          requestRender();
+        });
+      }
+
+      document.querySelectorAll("[data-preset]").forEach(btn => {
+        btn.addEventListener("click", () => goToPreset(btn.dataset.preset));
+      });
+
+      document.querySelectorAll("[data-demo-alice]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          triggerAliceButton(parseInt(btn.dataset.demoAlice, 10));
+        });
+      });
+
+      document.querySelectorAll("[data-demo-bob]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          triggerBobButton(parseInt(btn.dataset.demoBob, 10));
+        });
+      });
+
+      document.getElementById("btn-demo-pulse").addEventListener("click", () => {
+        stopAutoDemo(true);
+        if (!state.demo.active) setDemoActive(true);
+        else fireDemoLaserAndMeasure();
+      });
+
+      document.getElementById("btn-demo-auto").addEventListener("click", () => {
+        toggleAutoDemo();
+      });
+
+      document.getElementById("btn-recon-clear").addEventListener("click", () => {
+        stopAutoDemo(true);
+        state.demo.events = [];
+        renderReconTable();
+        setStatus("Tabla de reconciliación BB84 limpiada");
+      });
+
+      const viewportWrap = document.getElementById("viewport-wrap");
+      if (viewportWrap && typeof ResizeObserver !== "undefined") {
+        new ResizeObserver(() => requestRender()).observe(viewportWrap);
+      }
+
+      window.addEventListener("resize", requestRender);
+      window.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+        if (e.key === "r" || e.key === "R") goToPreset("iso-ref");
+      });
+    }
+
+    function tick(now) {
+      let aliceFinishedOpts = null;
+      let bobFinishedOpts = null;
+
+      if (aliceMotorAnim) {
+        const u = Math.min(1, (now - aliceMotorAnim.t0) / aliceMotorAnim.dur);
+        const e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+        state.aliceDeg = aliceMotorAnim.startDeg + (aliceMotorAnim.endDeg - aliceMotorAnim.startDeg) * e;
+        updatePhysicsReadout();
+        needsRender = true;
+        if (u >= 1) {
+          state.aliceDeg = aliceMotorAnim.endDeg;
+          aliceFinishedOpts = aliceMotorAnim.options || {};
+          aliceMotorAnim = null;
+        }
+      }
+
+      if (bobMotorAnim) {
+        const u = Math.min(1, (now - bobMotorAnim.t0) / bobMotorAnim.dur);
+        const e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+        state.bobDeg = bobMotorAnim.startDeg + (bobMotorAnim.endDeg - bobMotorAnim.startDeg) * e;
+        updatePhysicsReadout();
+        needsRender = true;
+        if (u >= 1) {
+          state.bobDeg = bobMotorAnim.endDeg;
+          bobFinishedOpts = bobMotorAnim.options || {};
+          bobMotorAnim = null;
+        }
+      }
+
+      if ((aliceFinishedOpts || bobFinishedOpts) && !aliceMotorAnim && !bobMotorAnim) {
+        const opts = (aliceFinishedOpts && !aliceFinishedOpts.skipLog)
+          ? aliceFinishedOpts
+          : (bobFinishedOpts || aliceFinishedOpts || {});
+        fireDemoLaserAndMeasure(opts);
+      }
+
+      if (camAnim) {
+        const u = Math.min(1, (now - camAnim.t0) / camAnim.dur);
+        const e = 1 - Math.pow(1 - u, 3);
+        const s = camAnim.start, d = camAnim.end;
+        state.cam.az = s.az + (d.az - s.az) * e;
+        state.cam.el = s.el + (d.el - s.el) * e;
+        state.cam.dist = s.dist + (d.dist - s.dist) * e;
+        state.cam.orthoScale = s.orthoScale + (d.orthoScale - s.orthoScale) * e;
+        state.cam.target = [
+          s.target[0] + (d.target[0] - s.target[0]) * e,
+          s.target[1] + (d.target[1] - s.target[1]) * e,
+          s.target[2] + (d.target[2] - s.target[2]) * e
+        ];
+        needsRender = true;
+        if (u >= 1) camAnim = null;
+      }
+
+      if (needsRender) {
+        needsRender = false;
+        renderFrame();
+      }
+      requestAnimationFrame(tick);
+    }
+
+    window.QKDStudio = {
+      state,
+      getComponents: () => sceneComponents,
+      getBeamSegments,
+      applyTheme,
+      goToPreset,
+      setDemoActive,
+      triggerAliceButton,
+      triggerBobButton,
+      fireDemoLaserAndMeasure,
+      startAutoDemo,
+      toggleAutoDemo,
+      stopAutoDemo,
+      pickComponentAt,
+      renderNow: renderFrame
+    };
+
+    try {
+      sceneComponents = buildSceneCatalog();
+      initUI();
+      setupCanvasInteraction();
+      applyTheme("pencil");
+      setDemoActive(true);
+      startAutoDemo();
+      updatePhysicsReadout();
+      renderFrame();
+      setStatus(`Demo QKD BB84 lista — ${sceneComponents.length} componentes 3D`);
+      requestAnimationFrame(tick);
+    } catch (err) {
+      const eb = document.getElementById("error-banner");
+      eb.style.display = "block";
+      eb.textContent = "Error inicializando la demostración 3D: " + err.message;
+      console.error(err);
+    }
+  })();
+  </script>
+</body>
+</html>

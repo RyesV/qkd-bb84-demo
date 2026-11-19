@@ -3,31 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Protocolo QKD BB84 — Demostración Interactiva 3D (SOCHIFI)</title>
+  <title>Protocolo BB84 · Demostración Interactiva 3D (UdeC / SOCHIFI)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* PALETA EDITORIAL LIQUID GLASS */
+    /* POSTER UDEC / SOCHIFI — CUADERNILLO CIENTÍFICO & DEMO QKD BB84 */
     :root {
-      --paper: #F4F2ED;
-      --sheet: #FFFFFF;
-      --stone: #E8E4DC;
-      --ink: #1F2421;
-      --muted: #5A635E;
-      --border: #D6D1C7;
-      --olive: #2E6F56;
-      --olive-hover: #245944;
-      --terracotta: #B85A43;
-      --ochre: #9E6B2B;
-      --slate-blue: #2D6480;
-      --sage-wash: #DCECE4;
-      --sky-wash: #DCEAF2;
-      --cream-wash: #F3E8D2;
-      --rose-wash: #F3DFDA;
-      --lilac-wash: #E6E8EE;
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --poster-black: #0e1013;
+      --poster-white: #ffffff;
+      --poster-paper: #f6f4ec;
+      --poster-grid: rgba(145, 139, 124, 0.22);
+      --poster-ink: #181a1d;
+      --poster-border: #1f2226;
+      --poster-muted: #4b5058;
+
+      --alice-color: #2b7a3d;
+      --alice-soft: #eaf5ec;
+      --alice-dark: #185226;
+
+      --bob-color: #9e2a2b;
+      --bob-soft: #fbeeed;
+      --bob-dark: #741a1b;
+
+      --match-bg: #dcfce7;
+      --match-border: #1f7a38;
+      --match-ink: #14532d;
+
+      --miss-bg: #fee2e2;
+      --miss-border: #b91c1c;
+      --miss-ink: #7f1d1d;
+
+      --laser-bg: #fff7ed;
+      --laser-border: #c82828;
+      --laser-ink: #7c1919;
+
+      --led-green: #22c55e;
+      --led-green-border: #15803d;
+
+      --font-mono: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+      --card-shadow: 0 2px 0 rgba(24, 26, 29, 0.08);
     }
 
     *, *::before, *::after {
@@ -42,20 +59,21 @@
       max-width: 100%;
       overflow: hidden;
       font-family: var(--font-sans);
-      color: var(--ink);
-      background-color: var(--paper);
+      font-weight: 400;
+      color: var(--poster-ink);
+      background-color: var(--poster-paper);
       background-image:
-        radial-gradient(circle at 12% 18%, rgba(220, 234, 242, 0.85) 0%, transparent 48%),
-        radial-gradient(circle at 88% 82%, rgba(220, 236, 228, 0.85) 0%, transparent 48%),
-        linear-gradient(145deg, #F7F5F0 0%, #ECE9E1 100%);
-      font-size: 13px;
-      line-height: 1.4;
+        linear-gradient(to right, var(--poster-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--poster-grid) 1px, transparent 1px);
+      background-size: 20px 20px;
+      font-size: 14px;
+      line-height: 1.45;
       -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
     }
 
     :focus-visible {
-      outline: 2px solid var(--slate-blue);
+      outline: 2px solid var(--poster-ink);
       outline-offset: 2px;
     }
 
@@ -71,15 +89,15 @@
     }
 
     .icon-sm {
-      width: 13px;
-      height: 13px;
+      width: 14px;
+      height: 14px;
     }
 
     .app-shell {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      padding: 12px;
+      gap: 10px;
+      padding: 10px 14px 12px;
       height: 100vh;
       height: 100dvh;
       width: 100%;
@@ -87,23 +105,19 @@
       overflow: hidden;
     }
 
-    /* Liquid Glass Topbar */
-    .liquid-glass-bar {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(248, 246, 241, 0.80) 100%);
-      backdrop-filter: blur(22px) saturate(140%);
-      -webkit-backdrop-filter: blur(22px) saturate(140%);
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 6px 24px -4px rgba(31, 36, 33, 0.06), inset 0 1.5px 1px rgba(255, 255, 255, 1);
-      border-radius: 26px;
-    }
-
+    /* Black Top Header Banner matching the SOCHIFI Poster */
     .topbar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 8px 12px;
-      padding: 9px 14px;
+      padding: 7px 12px;
+      background: var(--poster-black);
+      color: var(--poster-white);
+      border: 1.5px solid var(--poster-border);
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
       z-index: 20;
       min-width: 0;
       flex-shrink: 0;
@@ -112,39 +126,39 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 10px;
       min-width: 0;
     }
 
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--ink);
-      color: #F7F5F0;
-      font-family: var(--font-mono);
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.05em;
-      box-shadow: 0 2px 6px rgba(31, 36, 33, 0.14);
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.015em;
-      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      color: var(--poster-white);
+    }
+
+    .brand-sub {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.2;
     }
 
     .topbar-controls {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       min-width: 0;
     }
 
@@ -152,157 +166,137 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       min-width: 0;
     }
 
-    .glass-pill {
+    /* Poster Topbar Buttons */
+    .poster-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.80);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 2px 6px rgba(31, 36, 33, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
-      border-radius: 999px;
-      color: var(--ink);
-      font-family: inherit;
-      font-size: 12px;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      border-radius: 9999px;
+      color: var(--poster-white);
+      font-family: var(--font-sans);
+      font-size: 12.5px;
       font-weight: 600;
-      padding: 6px 12px;
+      padding: 6px 13px;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 90ms ease;
     }
 
-    .glass-pill:hover {
-      background: rgba(255, 255, 255, 0.98);
-      transform: translateY(-0.5px);
-      box-shadow: 0 4px 10px rgba(31, 36, 33, 0.07), inset 0 1px 0 rgba(255, 255, 255, 1);
+    .poster-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: var(--poster-white);
     }
 
-    .glass-pill:active {
+    .poster-btn:active {
       transform: translateY(0.5px);
     }
 
-    .glass-pill.pill-sm {
-      padding: 5px 10px;
-      font-size: 11.5px;
+    .poster-btn:focus-visible {
+      outline: 2px solid var(--poster-white);
+      outline-offset: 2px;
     }
 
-    .glass-pill[aria-pressed="true"] {
-      background: linear-gradient(180deg, #E8F2EE 0%, #DCECE4 100%);
-      border-color: rgba(46, 111, 86, 0.45);
-      color: var(--olive);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 2px 8px rgba(46, 111, 86, 0.10);
+    .poster-btn[aria-expanded="true"],
+    .poster-btn[aria-pressed="true"] {
+      background: var(--poster-white);
+      border-color: var(--poster-white);
+      color: var(--poster-black);
     }
 
-    /* Workspace Row */
+    .poster-btn.is-play[aria-pressed="true"] {
+      background: var(--alice-soft);
+      border-color: var(--alice-color);
+      color: var(--alice-dark);
+    }
+
+    /* Main Workspace */
     .workspace {
       display: flex;
       flex: 1;
       min-height: 0;
       min-width: 0;
       gap: 12px;
-      transition: gap 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .workspace.workspace-collapsed {
       gap: 0;
     }
 
-    /* Collapsible Control Sidebar */
-    .liquid-glass-sidebar {
-      background: linear-gradient(180deg, rgba(250, 249, 246, 0.84) 0%, rgba(243, 240, 234, 0.78) 100%);
-      backdrop-filter: blur(24px) saturate(145%);
-      -webkit-backdrop-filter: blur(24px) saturate(145%);
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 8px 28px -6px rgba(31, 36, 33, 0.07), inset 0 1.5px 1px rgba(255, 255, 255, 1);
-      border-radius: 28px;
-      width: 328px;
-      flex-shrink: 0;
-      opacity: 1;
-      transform: translateX(0) scale(1);
-      transform-origin: left center;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 12px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(90, 99, 94, 0.3) transparent;
-      z-index: 15;
-      min-height: 0;
-      transition: width 0.42s cubic-bezier(0.22, 1, 0.36, 1), padding 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.32s ease, box-shadow 0.32s ease;
-    }
-
-    .liquid-glass-sidebar .sidebar-inner {
-      min-width: 298px;
+    .stage-column {
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      transition: opacity 0.26s ease, transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+      min-width: 0;
+      min-height: 0;
     }
 
-    .liquid-glass-sidebar.sidebar-collapsed {
+    /* Collapsible Control Sidebar (Poster Notebook Panel) */
+    .control-sidebar {
+      background: rgba(255, 255, 255, 0.68);
+      border: 1.5px solid var(--poster-border);
+      border-radius: 10px;
+      width: 344px;
+      flex-shrink: 0;
+      opacity: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(24, 26, 29, 0.28) transparent;
+      z-index: 15;
+      min-height: 0;
+    }
+
+    .control-sidebar .sidebar-inner {
+      min-width: 316px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-sidebar.sidebar-collapsed {
       width: 0px !important;
-      padding-left: 0px !important;
-      padding-right: 0px !important;
+      padding: 0px !important;
+      border-width: 0px !important;
       opacity: 0;
-      transform: translateX(-16px) scale(0.97);
-      border-color: transparent;
-      box-shadow: none;
+      visibility: hidden;
       overflow: hidden;
       pointer-events: none;
     }
 
-    .liquid-glass-sidebar.sidebar-collapsed .sidebar-inner {
-      opacity: 0;
-      transform: translateX(-12px);
-    }
-
-    /* Editorial Cards & Pastel Glass Tints */
+    /* Poster Content Cards */
     .editorial-card {
-      background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(250, 249, 246, 0.82) 100%);
-      backdrop-filter: blur(18px) saturate(135%);
-      -webkit-backdrop-filter: blur(18px) saturate(135%);
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      border-radius: 22px;
-      box-shadow: 0 6px 20px -6px rgba(31, 36, 33, 0.06), 0 1px 2px rgba(31, 36, 33, 0.04), inset 0 1.5px 1px rgba(255, 255, 255, 1);
-      padding: 12px 13px;
+      background: var(--poster-white);
+      border: 1.5px solid var(--poster-border);
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+      padding: 13px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 9px;
       min-width: 0;
       position: relative;
     }
 
-    .glass-tint-sky { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(220, 234, 242, 0.78) 100%); }
-    .glass-tint-sage { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(220, 236, 228, 0.78) 100%); }
-    .glass-tint-cream { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(243, 232, 210, 0.78) 100%); }
-    .glass-tint-rose { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(243, 223, 218, 0.78) 100%); }
-    .glass-tint-lilac { background: linear-gradient(155deg, rgba(255, 255, 255, 0.92) 0%, rgba(230, 232, 242, 0.78) 100%); }
-
-    .viewpoint-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 7px;
+    .editorial-card.is-alice {
+      border-top: 4px solid var(--alice-color);
     }
 
-    .viewpoint-btn {
-      min-height: 38px;
-      width: 100%;
-      border-radius: 14px;
-      font-size: 11.5px;
+    .editorial-card.is-bob {
+      border-top: 4px solid var(--bob-color);
     }
 
-    .glass-subcard {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.92);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 2px 6px rgba(31, 36, 33, 0.03);
-      border-radius: 16px;
+    .editorial-card.result-card {
+      background: var(--poster-white);
+      border-top: 4px solid var(--poster-ink);
     }
 
     .section-head {
@@ -316,40 +310,79 @@
     .section-title {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      color: var(--ink);
+      gap: 8px;
+      color: var(--poster-ink);
+    }
+
+    .step-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--poster-border);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--poster-ink);
+      background: var(--poster-paper);
+      flex-shrink: 0;
+    }
+
+    .editorial-card.is-alice .step-circle {
+      background: var(--alice-soft);
+      border-color: var(--alice-color);
+      color: var(--alice-dark);
+    }
+
+    .editorial-card.is-bob .step-circle {
+      background: var(--bob-soft);
+      border-color: var(--bob-color);
+      color: var(--bob-dark);
     }
 
     .editorial-card h2 {
       margin: 0;
-      font-size: 11.5px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 15px;
       font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--poster-ink);
     }
 
     .badge-mono {
       font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--ink);
-      padding: 3px 9px;
-      cursor: default;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--poster-ink);
+      background: var(--poster-paper);
+      border: 1px solid var(--poster-border);
+      border-radius: 9999px;
+      padding: 2px 9px;
     }
 
-    .badge-mono:hover {
-      transform: none;
+    .editorial-card.is-alice .badge-mono {
+      background: var(--alice-soft);
+      border-color: var(--alice-color);
+      color: var(--alice-dark);
+    }
+
+    .editorial-card.is-bob .badge-mono {
+      background: var(--bob-soft);
+      border-color: var(--bob-color);
+      color: var(--bob-dark);
     }
 
     .helper-copy {
       margin: 0;
-      font-size: 11.5px;
-      color: var(--muted);
-      line-height: 1.38;
+      font-size: 12.5px;
+      color: var(--poster-muted);
+      line-height: 1.4;
     }
 
-    /* Alice & Bob Synchronized Touch Buttons (>= 48px) */
+    /* Alice & Bob Synchronized Touch Buttons */
     .demo-btn-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -363,17 +396,25 @@
       justify-content: center;
       gap: 2px;
       min-height: 48px;
-      padding: 8px 11px;
-      color: var(--ink);
-      font-family: inherit;
+      padding: 7px 11px;
+      border-radius: 8px;
+      background: var(--poster-white);
+      border: 1.5px solid var(--poster-border);
+      color: var(--poster-ink);
+      font-family: var(--font-sans);
       cursor: pointer;
       text-align: left;
-      transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, transform 90ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 90ms ease;
     }
 
     .demo-sync-btn:hover {
-      background: rgba(255, 255, 255, 0.95);
-      transform: translateY(-1px);
+      background: var(--alice-soft);
+      border-color: var(--alice-color);
+    }
+
+    .demo-sync-btn.is-bob:hover {
+      background: var(--bob-soft);
+      border-color: var(--bob-color);
     }
 
     .demo-sync-btn:active {
@@ -381,40 +422,42 @@
     }
 
     .demo-sync-btn strong {
-      font-size: 12.5px;
+      font-size: 13px;
       font-family: var(--font-mono);
       font-weight: 700;
       line-height: 1.2;
     }
 
     .demo-sync-btn span {
-      font-size: 11px;
-      color: var(--muted);
+      font-size: 12px;
+      color: var(--poster-muted);
       line-height: 1.2;
     }
 
     .demo-sync-btn.active {
-      background: linear-gradient(155deg, rgba(255, 255, 255, 0.96) 0%, rgba(214, 232, 243, 0.92) 100%);
-      border-color: var(--slate-blue);
-      color: #1A4357;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 3px 10px rgba(45, 100, 128, 0.16);
+      background: var(--alice-color);
+      border-color: var(--alice-dark);
+      color: var(--poster-white);
     }
 
-    .demo-sync-btn.active span {
-      color: var(--slate-blue);
-      font-weight: 600;
+    .demo-sync-btn.active:hover {
+      background: var(--alice-dark);
     }
 
     .demo-sync-btn.active.is-bob {
-      background: linear-gradient(155deg, rgba(255, 255, 255, 0.96) 0%, rgba(213, 234, 223, 0.92) 100%);
-      border-color: var(--olive);
-      color: #1B4635;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 3px 10px rgba(46, 111, 86, 0.16);
+      background: var(--bob-color);
+      border-color: var(--bob-dark);
+      color: var(--poster-white);
     }
 
+    .demo-sync-btn.active.is-bob:hover {
+      background: var(--bob-dark);
+    }
+
+    .demo-sync-btn.active span,
     .demo-sync-btn.active.is-bob span {
-      color: var(--olive);
-      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
     }
 
     /* Action Buttons */
@@ -423,61 +466,67 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 8px 13px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      background: rgba(255, 255, 255, 0.85);
-      color: var(--ink);
-      font-size: 12px;
+      padding: 8px 15px;
+      border-radius: 9999px;
+      border: 1.5px solid var(--poster-border);
+      background: var(--poster-white);
+      color: var(--poster-ink);
+      font-size: 13px;
       font-weight: 600;
-      font-family: inherit;
+      font-family: var(--font-sans);
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(31, 36, 33, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
-      transition: background 140ms ease, border-color 140ms ease, transform 90ms ease, box-shadow 140ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 90ms ease;
     }
 
     .btn:hover {
-      background: rgba(255, 255, 255, 0.98);
-      transform: translateY(-0.5px);
+      background: var(--poster-paper);
     }
 
     .btn:active {
-      transform: translateY(1px);
+      transform: translateY(0.5px);
     }
 
     .btn-primary {
-      background: linear-gradient(180deg, #357E62 0%, var(--olive) 100%);
-      border-color: rgba(36, 89, 68, 0.65);
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(46, 111, 86, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      background: var(--poster-black);
+      border-color: var(--poster-black);
+      color: var(--poster-white);
     }
 
     .btn-primary:hover {
-      background: linear-gradient(180deg, #2E6F56 0%, var(--olive-hover) 100%);
+      background: #23272e;
+      border-color: #23272e;
     }
 
     .btn-subtle {
-      background: rgba(244, 242, 237, 0.82);
-      color: var(--muted);
+      background: var(--poster-paper);
+      border-color: var(--poster-border);
+      color: var(--poster-ink);
+    }
+
+    .btn-subtle:hover {
+      background: #ece8dc;
     }
 
     .btn-auto.is-running {
-      background: linear-gradient(180deg, #C76850 0%, var(--terracotta) 100%);
-      border-color: rgba(150, 68, 48, 0.6);
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(184, 90, 67, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      background: var(--alice-color);
+      border-color: var(--alice-dark);
+      color: var(--poster-white);
+    }
+
+    .btn-auto.is-running:hover {
+      background: var(--alice-dark);
     }
 
     .actions-stack {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 8px;
     }
 
     .actions-primary {
       width: 100%;
-      min-height: 48px;
-      font-size: 13px;
+      min-height: 46px;
+      font-size: 13.5px;
     }
 
     .actions-secondary {
@@ -493,42 +542,62 @@
       line-height: 1.2;
     }
 
-    /* Live Result Card & LEDs */
+    /* Live Result Card & Malus Readout */
+    .poster-subcard {
+      background: var(--poster-paper);
+      border: 1px solid rgba(31, 34, 38, 0.25);
+      border-radius: 6px;
+    }
+
     .result-phase {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 11.5px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
       font-weight: 700;
-      border: 1px solid transparent;
+      border: 1.5px solid var(--poster-border);
+      background: var(--poster-paper);
+      color: var(--poster-ink);
       width: fit-content;
       max-width: 100%;
     }
 
     .result-phase.moving {
-      background: rgba(243, 232, 210, 0.95);
-      color: var(--ochre);
-      border-color: rgba(158, 107, 43, 0.45);
+      background: var(--alice-soft);
+      border-color: var(--alice-color);
+      color: var(--alice-dark);
+    }
+
+    .result-phase.moving-bob {
+      background: var(--bob-soft);
+      border-color: var(--bob-color);
+      color: var(--bob-dark);
+    }
+
+    .result-phase.laser {
+      background: var(--laser-bg);
+      border-color: var(--laser-border);
+      color: var(--laser-ink);
     }
 
     .result-phase.det {
-      background: rgba(220, 236, 228, 0.95);
-      color: var(--olive);
-      border-color: rgba(46, 111, 86, 0.45);
+      background: var(--match-bg);
+      border-color: var(--match-border);
+      color: var(--match-ink);
     }
 
     .result-phase.split {
-      background: rgba(243, 223, 218, 0.95);
-      color: var(--terracotta);
-      border-color: rgba(184, 90, 67, 0.45);
+      background: var(--miss-bg);
+      border-color: var(--miss-border);
+      color: var(--miss-ink);
     }
 
     .result-explanation {
       margin: 0;
-      font-size: 12px;
-      color: var(--ink);
+      font-size: 13px;
+      color: var(--poster-ink);
       line-height: 1.45;
     }
 
@@ -537,30 +606,32 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 7px 10px;
-      font-size: 12px;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      color: var(--poster-ink);
     }
 
     .result-bit-pill {
       font-family: var(--font-mono);
       font-weight: 700;
-      font-size: 11.5px;
+      font-size: 12px;
       padding: 3px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid var(--border);
+      border-radius: 9999px;
+      background: var(--poster-white);
+      border: 1.5px solid var(--poster-border);
+      color: var(--poster-ink);
     }
 
     .result-bit-pill.is-kept {
-      background: rgba(220, 236, 228, 0.95);
-      border-color: var(--olive);
-      color: #1B4635;
+      background: var(--match-border);
+      border-color: var(--match-border);
+      color: var(--poster-white);
     }
 
     .result-bit-pill.is-discarded {
-      background: rgba(243, 223, 218, 0.95);
-      border-color: var(--terracotta);
-      color: #7A3222;
+      background: var(--miss-border);
+      border-color: var(--miss-border);
+      color: var(--poster-white);
     }
 
     .led-grid {
@@ -573,31 +644,29 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 9px;
-      transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+      padding: 8px 10px;
+      transition: background-color 150ms ease, border-color 150ms ease;
     }
 
     .led-bulb {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       flex-shrink: 0;
-      background: #334139;
-      border: 2px solid #94A39B;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
-      transition: background 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+      background: #9ca3af;
+      border: 1.5px solid var(--poster-border);
+      transition: background-color 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
     }
 
     .led-pill.is-lit {
-      background: rgba(236, 253, 243, 0.95);
-      border-color: #16A34A;
-      box-shadow: 0 2px 10px rgba(22, 163, 74, 0.18);
+      background: var(--match-bg);
+      border-color: var(--match-border);
     }
 
     .led-pill.is-lit .led-bulb {
-      background: #22FF00;
-      border-color: #15803D;
-      box-shadow: 0 0 12px rgba(34, 255, 0, 0.85), inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+      background: var(--led-green);
+      border-color: var(--led-green-border);
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
     }
 
     .led-text {
@@ -607,30 +676,32 @@
     }
 
     .led-text strong {
-      font-size: 11px;
+      font-size: 12px;
+      font-weight: 700;
       line-height: 1.25;
-      color: var(--ink);
+      color: var(--poster-ink);
     }
 
     .led-text small {
-      font-size: 10.5px;
-      color: var(--muted);
+      font-size: 12px;
+      color: var(--poster-muted);
       line-height: 1.2;
     }
 
     .led-pill.is-lit .led-text small {
-      color: #15803D;
-      font-weight: 700;
+      color: var(--match-ink);
+      font-weight: 600;
     }
 
     .physics-readout {
       font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 7px 10px;
+      font-size: 12px;
+      padding: 8px 10px;
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       gap: 6px;
-      color: var(--ink);
+      color: var(--poster-ink);
     }
 
     /* Tabla 1: Reconciliación BB84 */
@@ -639,16 +710,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 7px 10px;
-      font-size: 11.5px;
-      color: var(--ink);
+      padding: 8px 10px;
+      font-size: 12.5px;
+      color: var(--poster-ink);
     }
 
     .sifted-badge code {
       font-family: var(--font-mono);
       font-weight: 700;
-      font-size: 12px;
-      color: var(--olive);
+      font-size: 13px;
+      color: var(--match-ink);
       letter-spacing: 0.08em;
       word-break: break-all;
     }
@@ -658,24 +729,24 @@
       overflow-y: auto;
       max-height: 210px;
       max-width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(214, 209, 199, 0.9);
-      background: rgba(255, 255, 255, 0.85);
+      border-radius: 6px;
+      border: 1.5px solid var(--poster-border);
+      background: var(--poster-white);
       scrollbar-width: thin;
     }
 
     .recon-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11px;
+      font-size: 12px;
       text-align: center;
     }
 
     .recon-table th,
     .recon-table td {
-      border-bottom: 1px solid rgba(214, 209, 199, 0.65);
-      border-right: 1px solid rgba(214, 209, 199, 0.55);
-      padding: 6px 4px;
+      border-bottom: 1px solid rgba(31, 34, 38, 0.16);
+      border-right: 1px solid rgba(31, 34, 38, 0.12);
+      padding: 6px 5px;
       white-space: nowrap;
     }
 
@@ -692,50 +763,40 @@
       position: sticky;
       top: 0;
       z-index: 2;
-      background: #EAD8F8;
-      color: var(--ink);
+      background: var(--poster-black);
+      color: var(--poster-white);
       font-weight: 700;
     }
 
     .recon-table tr.is-match {
-      background: rgba(220, 236, 228, 0.45);
+      background: var(--alice-soft);
+      color: var(--match-ink);
+      font-weight: 600;
     }
 
     .recon-table tr.is-miss {
-      background: rgba(250, 249, 246, 0.75);
-      color: var(--muted);
+      background: var(--bob-soft);
+      color: var(--miss-ink);
     }
 
     .recon-empty td {
-      padding: 12px 8px;
-      color: var(--muted);
+      padding: 14px 10px;
+      color: var(--poster-muted);
       white-space: normal;
       font-style: italic;
     }
 
-    /* 3D Liquid Glass Viewport */
-    .liquid-glass-viewport {
+    /* 3D Viewport — Framed Poster Sketch Stage */
+    .viewport-frame {
       flex: 1;
       position: relative;
       min-width: 0;
       min-height: 0;
       overflow: hidden;
-      background: linear-gradient(145deg, rgba(252, 251, 248, 0.58) 0%, rgba(244, 240, 232, 0.45) 100%);
-      backdrop-filter: blur(14px) saturate(130%);
-      -webkit-backdrop-filter: blur(14px) saturate(130%);
-      border: 1.5px solid rgba(255, 255, 255, 0.92);
-      border-radius: 28px;
-      box-shadow: 0 12px 32px -8px rgba(31, 36, 33, 0.08), inset 0 2px 2px rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(213, 206, 192, 0.4);
-    }
-
-    .liquid-glass-viewport::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      z-index: 6;
-      box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.65), inset 0 -2px 4px rgba(31, 36, 33, 0.05);
+      background: #f7f4ec;
+      border: 1.5px solid var(--poster-border);
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
     }
 
     #gl-canvas {
@@ -772,68 +833,17 @@
       z-index: 4;
     }
 
-    .demo-hud-banner {
-      position: absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      max-width: min(680px, calc(100% - 24px));
-      padding: 7px 14px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.96);
-      box-shadow: 0 4px 16px rgba(31, 36, 33, 0.09), inset 0 1px 0 rgba(255, 255, 255, 1);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ink);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      pointer-events: none;
-      z-index: 12;
-    }
-
-    .demo-hud-banner[hidden] {
-      display: none;
-    }
-
-    .demo-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      background: #9CA3AF;
-    }
-
-    .demo-dot.moving {
-      background: var(--ochre);
-      box-shadow: 0 0 0 3px rgba(158, 107, 43, 0.24);
-    }
-
-    .demo-dot.det {
-      background: #16A34A;
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.75);
-    }
-
-    .demo-dot.split {
-      background: var(--terracotta);
-      box-shadow: 0 0 7px rgba(184, 90, 67, 0.5);
-    }
-
     .hud-pill {
       position: absolute;
       z-index: 10;
-      background: rgba(255, 255, 255, 0.84);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      border-radius: 999px;
-      padding: 5px 11px;
-      font-size: 11px;
-      color: var(--muted);
-      box-shadow: 0 2px 10px rgba(31, 36, 33, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--poster-border);
+      border-radius: 9999px;
+      padding: 5px 12px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--poster-ink);
       pointer-events: none;
     }
 
@@ -849,167 +859,459 @@
     .hud-status {
       right: 12px;
       bottom: 12px;
-      max-width: 330px;
+      max-width: 340px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    /* Always-Visible 3-Phase Stepper & Verdict Dock Below Viewport */
+    .phase-dock {
+      flex: 0 0 auto;
+      background: var(--poster-white);
+      border: 1.5px solid var(--poster-border);
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .phase-track {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .step-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(31, 34, 38, 0.2);
+      background: var(--poster-paper);
+      color: var(--poster-muted);
+      min-width: 0;
+      transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+
+    .step-pill .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-pill .step-body {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .step-pill .step-label {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: inherit;
+    }
+
+    .step-pill .step-val {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .step-pill.is-done {
+      background: var(--poster-white);
+      border-color: var(--poster-border);
+      color: var(--poster-ink);
+    }
+
+    .step-pill.is-active-alice {
+      background: var(--alice-soft);
+      border-color: var(--alice-color);
+      color: var(--alice-dark);
+    }
+
+    .step-pill.is-active-alice .step-num {
+      background: var(--alice-color);
+      border-color: var(--alice-color);
+      color: var(--poster-white);
+    }
+
+    .step-pill.is-active-bob {
+      background: var(--bob-soft);
+      border-color: var(--bob-color);
+      color: var(--bob-dark);
+    }
+
+    .step-pill.is-active-bob .step-num {
+      background: var(--bob-color);
+      border-color: var(--bob-color);
+      color: var(--poster-white);
+    }
+
+    .step-pill.is-active-laser {
+      background: var(--laser-bg);
+      border-color: var(--laser-border);
+      color: var(--laser-ink);
+    }
+
+    .step-pill.is-active-laser .step-num {
+      background: var(--laser-border);
+      border-color: var(--laser-border);
+      color: var(--poster-white);
+    }
+
+    .step-pill.is-match {
+      background: var(--match-bg);
+      border-color: var(--match-border);
+      color: var(--match-ink);
+    }
+
+    .step-pill.is-match .step-num {
+      background: var(--match-border);
+      border-color: var(--match-border);
+      color: var(--poster-white);
+    }
+
+    .step-pill.is-discard {
+      background: var(--miss-bg);
+      border-color: var(--miss-border);
+      color: var(--miss-ink);
+    }
+
+    .step-pill.is-discard .step-num {
+      background: var(--miss-border);
+      border-color: var(--miss-border);
+      color: var(--poster-white);
+    }
+
+    .dock-key-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--poster-border);
+      background: var(--poster-black);
+      color: var(--poster-white);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .dock-key-pill code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #86efac;
+    }
+
+    .verdict-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 2px solid var(--poster-border);
+      background: var(--poster-paper);
+      color: var(--poster-ink);
+      transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+
+    .verdict-title {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .verdict-detail {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .verdict-banner.is-phase-alice {
+      background: var(--alice-soft);
+      border-color: var(--alice-color);
+      color: var(--alice-dark);
+    }
+
+    .verdict-banner.is-phase-bob {
+      background: var(--bob-soft);
+      border-color: var(--bob-color);
+      color: var(--bob-dark);
+    }
+
+    .verdict-banner.is-phase-laser {
+      background: var(--laser-bg);
+      border-color: var(--laser-border);
+      color: var(--laser-ink);
+    }
+
+    .verdict-banner.is-verdict-match {
+      background: var(--match-bg);
+      border-color: var(--match-border);
+      color: var(--match-ink);
+    }
+
+    .verdict-banner.is-verdict-discard {
+      background: var(--miss-bg);
+      border-color: var(--miss-border);
+      color: var(--miss-ink);
     }
 
     .error-banner {
       position: absolute;
       inset: 20px;
       z-index: 50;
-      background: #FFF5F5;
-      border: 2px solid var(--terracotta);
-      border-radius: 18px;
+      background: var(--miss-bg);
+      border: 2px solid var(--miss-border);
+      border-radius: 10px;
       padding: 18px;
-      color: #8B2B1A;
+      color: var(--miss-ink);
       display: none;
     }
 
-    /* Responsive Phone & Portrait Layout (390px+) */
+    /* Responsive Phone & Portrait Layout */
     @media (max-width: 820px) {
       .app-shell {
-        padding: 8px;
-        gap: 8px;
+        padding: 6px;
+        gap: 6px;
         height: 100vh;
         height: 100dvh;
       }
 
-      .liquid-glass-bar {
-        border-radius: 20px;
-      }
-
       .topbar {
-        padding: 7px 10px;
+        padding: 6px 8px;
         gap: 6px;
       }
 
       .brand {
         width: 100%;
         justify-content: flex-start;
+        gap: 8px;
       }
 
       .brand h1 {
-        font-size: 12.5px;
-        line-height: 1.2;
-        flex: 1;
-        min-width: 0;
+        font-size: 14px;
+        line-height: 1.15;
       }
 
       .topbar-controls {
         width: 100%;
-        gap: 5px;
       }
 
       .toolbar-group {
-        gap: 4px;
+        width: 100%;
+        justify-content: space-between;
+        gap: 5px;
       }
 
-      .glass-pill.pill-sm {
-        padding: 5px 9px;
-        font-size: 11px;
+      .poster-btn {
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+
+      .toolbar-group .poster-btn {
+        flex: 1 1 0;
       }
 
       .workspace {
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
       }
 
       .workspace.workspace-collapsed {
         gap: 0;
       }
 
-      .liquid-glass-viewport {
+      .stage-column {
         order: 1;
-        flex: 0 0 44dvh;
-        height: 44dvh;
-        min-height: 210px;
-        border-radius: 22px;
+        flex: 0 0 48dvh;
+        min-height: 230px;
+        gap: 6px;
       }
 
-      .workspace.workspace-collapsed .liquid-glass-viewport {
+      .workspace.workspace-collapsed .stage-column {
         flex: 1 1 auto;
-        height: auto;
+        min-height: 0;
       }
 
-      .liquid-glass-sidebar {
+      .viewport-frame {
+        flex: 1 1 auto;
+        min-height: 210px;
+        border-radius: 8px;
+      }
+
+      .hud-bottom-left,
+      .hud-status {
+        display: none;
+      }
+
+      .phase-dock {
+        padding: 7px 8px;
+        gap: 6px;
+        border-radius: 8px;
+      }
+
+      .phase-track {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .step-pill {
+        padding: 5px 6px;
+        gap: 5px;
+      }
+
+      .step-pill .step-num {
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
+      }
+
+      .step-pill .step-label {
+        font-size: 10.5px;
+      }
+
+      .step-pill .step-val {
+        font-size: 11px;
+      }
+
+      .dock-key-pill {
+        grid-column: 1 / -1;
+        justify-content: space-between;
+        padding: 4px 10px;
+      }
+
+      .verdict-banner {
+        padding: 8px 10px;
+        gap: 3px;
+      }
+
+      .verdict-title {
+        font-size: 13px;
+      }
+
+      .verdict-detail {
+        font-size: 12px;
+      }
+
+      .control-sidebar {
         order: 2;
         width: 100% !important;
         flex: 1 1 auto;
         min-height: 0;
-        border-radius: 22px;
-        padding: 10px;
+        border-radius: 8px;
+        padding: 8px;
         -webkit-overflow-scrolling: touch;
       }
 
-      .liquid-glass-sidebar .sidebar-inner {
+      .control-sidebar .sidebar-inner {
         min-width: 0;
         width: 100%;
-        gap: 9px;
+        gap: 8px;
       }
 
-      .liquid-glass-sidebar.sidebar-collapsed {
+      .control-sidebar.sidebar-collapsed {
         flex: 0 0 0px !important;
         height: 0px !important;
         min-height: 0px !important;
         padding: 0 !important;
         margin: 0 !important;
         border-width: 0 !important;
-        transform: translateY(12px);
       }
 
       .editorial-card {
-        border-radius: 18px;
-        padding: 10px 11px;
+        padding: 11px 12px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand-sub {
+        display: none;
+      }
+    }
+
+    @media (max-width: 820px), (pointer: coarse) {
+      .poster-btn,
+      .demo-sync-btn,
+      #btn-demo-pulse,
+      #btn-demo-auto,
+      #btn-recon-clear {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .demo-btn-grid,
+      .actions-secondary,
+      .led-grid {
+        grid-template-columns: 1fr;
       }
 
-      .demo-hud-banner {
-        top: 8px;
-        max-width: calc(100% - 14px);
-        padding: 5px 10px;
-        font-size: 11px;
-        border-radius: 14px;
-      }
-
-      .hud-bottom-left {
-        left: 8px;
-        bottom: 8px;
-        padding: 4px 9px;
-        font-size: 10px;
-      }
-
-      .hud-status {
+      .step-pill .step-val {
         display: none;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
       }
     }
   </style>
 </head>
 <body>
   <div id="app-shell" class="app-shell">
-    <header class="topbar liquid-glass-bar">
+    <header class="topbar">
       <div class="brand">
-        <button id="btn-toggle-panel" class="glass-pill pill-sm" type="button" aria-expanded="false" aria-controls="control-panel" title="Mostrar u ocultar panel de controles">
+        <button id="btn-toggle-panel" class="poster-btn" type="button" aria-expanded="false" aria-controls="control-panel" title="Mostrar u ocultar panel de controles y tabla BB84">
           <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
           <span>Panel</span>
         </button>
-        <span class="brand-badge">QKD BB84</span>
-        <h1>QKD BB84 · Demostración Interactiva 3D</h1>
+        <div class="brand-title-wrap">
+          <h1>Protocolo BB84 · Demo 3D</h1>
+          <span class="brand-sub">Implementación Didáctica QKD · Depto. de Física, UdeC</span>
+        </div>
       </div>
 
       <div class="topbar-controls">
-        <div class="toolbar-group" role="group" aria-label="Herramientas de vista">
-          <button id="btn-restaurar-vista" class="glass-pill pill-sm" type="button" title="Restaurar vista general 3D por defecto">
+        <div class="toolbar-group" role="group" aria-label="Controles de simulación y vista">
+          <button id="btn-topbar-play" class="poster-btn is-play" type="button" aria-pressed="false" title="Pausar o reanudar demostración paso a paso">
+            <svg id="btn-topbar-play-icon" class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+            <span id="btn-topbar-play-label">Pausar</span>
+          </button>
+          <button id="btn-restaurar-vista" class="poster-btn" type="button" title="Restaurar vista general 3D (Alice a la izquierda, Bob a la derecha)">
             <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
             <span>Restaurar Vista</span>
           </button>
-          <button id="btn-labels-toggle" class="glass-pill pill-sm" type="button" aria-pressed="false" title="Mostrar u ocultar etiquetas de componentes">
+          <button id="btn-labels-toggle" class="poster-btn" type="button" aria-pressed="false" title="Mostrar u ocultar etiquetas técnicas de componentes">
             <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
             <span>Etiquetas</span>
           </button>
@@ -1018,59 +1320,59 @@
     </header>
 
     <div class="workspace workspace-collapsed" id="workspace">
-      <aside class="control-panel liquid-glass-sidebar sidebar-collapsed" id="control-panel" aria-label="Controles interactivos y resultados BB84">
+      <aside class="control-panel control-sidebar sidebar-collapsed" id="control-panel" aria-label="Controles interactivos y resultados BB84" aria-hidden="true" inert>
         <div class="sidebar-inner">
-          <section class="editorial-card glass-tint-sky">
+          <section class="editorial-card is-alice">
             <div class="section-head">
               <div class="section-title">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+                <span class="step-circle" aria-hidden="true">1</span>
                 <h2>Módulo Alice (Emisor)</h2>
               </div>
-              <span id="demo-alice-badge" class="badge-mono glass-pill">0° • Base + • Bit 0</span>
+              <span id="demo-alice-badge" class="badge-mono">0° • Base + • Bit 0</span>
             </div>
             <p class="helper-copy">Elige la polarización del fotón o toca directamente los 4 botones físicos sobre la caja 3D de Alice.</p>
-            <div class="demo-btn-grid">
-              <button type="button" class="demo-sync-btn glass-subcard active" data-demo-alice="0">
+            <div class="demo-btn-grid" role="group" aria-label="Polarización y bit de Alice">
+              <button type="button" class="demo-sync-btn active" data-demo-alice="0" aria-pressed="true">
                 <strong>B1: 0°</strong>
                 <span>Base + • Bit 0</span>
               </button>
-              <button type="button" class="demo-sync-btn glass-subcard" data-demo-alice="1">
+              <button type="button" class="demo-sync-btn" data-demo-alice="1" aria-pressed="false">
                 <strong>B2: 90°</strong>
                 <span>Base + • Bit 1</span>
               </button>
-              <button type="button" class="demo-sync-btn glass-subcard" data-demo-alice="2">
+              <button type="button" class="demo-sync-btn" data-demo-alice="2" aria-pressed="false">
                 <strong>B3: -45°</strong>
                 <span>Base × • Bit 0</span>
               </button>
-              <button type="button" class="demo-sync-btn glass-subcard" data-demo-alice="3">
+              <button type="button" class="demo-sync-btn" data-demo-alice="3" aria-pressed="false">
                 <strong>B4: +45°</strong>
                 <span>Base × • Bit 1</span>
               </button>
             </div>
           </section>
 
-          <section class="editorial-card glass-tint-sage">
+          <section class="editorial-card is-bob">
             <div class="section-head">
               <div class="section-title">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+                <span class="step-circle" aria-hidden="true">2</span>
                 <h2>Módulo Bob (Receptor)</h2>
               </div>
-              <span id="demo-bob-badge" class="badge-mono glass-pill">Base + (0°)</span>
+              <span id="demo-bob-badge" class="badge-mono">Base + (0°)</span>
             </div>
             <p class="helper-copy">Selecciona la base de análisis o toca los 2 botones sobre la caja 3D de Bob.</p>
-            <div class="demo-btn-grid">
-              <button type="button" class="demo-sync-btn glass-subcard is-bob active" data-demo-bob="0">
+            <div class="demo-btn-grid" role="group" aria-label="Base de medición de Bob">
+              <button type="button" class="demo-sync-btn is-bob active" data-demo-bob="0" aria-pressed="true">
                 <strong>Base + (0°)</strong>
                 <span>Medida rectilínea</span>
               </button>
-              <button type="button" class="demo-sync-btn glass-subcard is-bob" data-demo-bob="1">
+              <button type="button" class="demo-sync-btn is-bob" data-demo-bob="1" aria-pressed="false">
                 <strong>Base × (+45°)</strong>
                 <span>Medida diagonal</span>
               </button>
             </div>
           </section>
 
-          <section class="editorial-card glass-tint-cream">
+          <section class="editorial-card">
             <div class="section-head">
               <div class="section-title">
                 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -1095,13 +1397,13 @@
             </div>
           </section>
 
-          <section class="editorial-card glass-tint-rose result-card" aria-live="polite">
+          <section class="editorial-card result-card" aria-live="polite">
             <div class="section-head">
               <div class="section-title">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                <h2>Resultado en Vivo &amp; Detectores</h2>
+                <span class="step-circle" aria-hidden="true">3</span>
+                <h2>Resultado y Detectores</h2>
               </div>
-              <span id="result-angle-badge" class="badge-mono glass-pill">Δθ = 0°</span>
+              <span id="result-angle-badge" class="badge-mono">Δθ = 0°</span>
             </div>
 
             <div id="result-phase" class="result-phase det">Bases Coinciden (+)</div>
@@ -1109,20 +1411,20 @@
               Alice (Base +, 0°) y Bob (Base +, 0°) usan la misma base: todo el haz llega al Detector 1 (LED verde) y el bit se conserva.
             </p>
 
-            <div class="result-bit-row glass-subcard">
+            <div class="result-bit-row poster-subcard">
               <span>Bit resultante:</span>
               <span id="result-bit-pill" class="result-bit-pill is-kept">0 (Conservado en clave)</span>
             </div>
 
             <div class="led-grid">
-              <div class="led-pill glass-subcard is-lit" id="led-det1">
+              <div class="led-pill poster-subcard is-lit" id="led-det1">
                 <span class="led-bulb" aria-hidden="true"></span>
                 <div class="led-text">
                   <strong>Detector 1 (0° Transmitido)</strong>
                   <small id="led-det1-sub">LED encendido</small>
                 </div>
               </div>
-              <div class="led-pill glass-subcard" id="led-det2">
+              <div class="led-pill poster-subcard" id="led-det2">
                 <span class="led-bulb" aria-hidden="true"></span>
                 <div class="led-text">
                   <strong>Detector 2 (90° Reflejado)</strong>
@@ -1131,24 +1433,24 @@
               </div>
             </div>
 
-            <div id="physics-readout" class="physics-readout glass-subcard">
+            <div id="physics-readout" class="physics-readout poster-subcard">
               <span>Δθ = 0°</span>
-              <span>T = 100%</span>
-              <span>R = 0%</span>
+              <span>I₁ = I₀ cos²(Δθ) = 100%</span>
+              <span>I₂ = I₀ sin²(Δθ) = 0%</span>
             </div>
           </section>
 
-          <section class="editorial-card glass-tint-cream">
+          <section class="editorial-card">
             <div class="section-head">
               <div class="section-title">
                 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
                 <h2>Tabla 1: Reconciliación BB84</h2>
               </div>
-              <span id="recon-count" class="badge-mono glass-pill">0 ev.</span>
+              <span id="recon-count" class="badge-mono">0 ev.</span>
             </div>
 
-            <div class="sifted-badge glass-subcard">
-              <span>Clave Tamizada Acumulada:</span>
+            <div class="sifted-badge poster-subcard">
+              <span>Clave Secreta Acumulada:</span>
               <code id="sifted-key-value">—</code>
             </div>
 
@@ -1171,46 +1473,62 @@
               </table>
             </div>
           </section>
-
-          <section class="editorial-card glass-tint-lilac">
-            <div class="section-head">
-              <div class="section-title">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <h2>Puntos de Vista</h2>
-              </div>
-              <button id="btn-ortho-toggle" class="glass-pill pill-sm" type="button" aria-pressed="true" title="Alternar proyección Ortográfica / Perspectiva">Ortográfica</button>
-            </div>
-            <div class="viewpoint-grid" role="group" aria-label="Vistas rápidas de cámara">
-              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="iso-ref" aria-pressed="true">Vista General</button>
-              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="alice" aria-pressed="false">Módulo Alice</button>
-              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="bob" aria-pressed="false">Módulo Bob</button>
-              <button class="glass-pill pill-sm viewpoint-btn" type="button" data-preset="top" aria-pressed="false">Planta</button>
-            </div>
-          </section>
         </div>
       </aside>
 
-      <main class="viewport-wrap liquid-glass-viewport" id="viewport-wrap">
-        <canvas id="gl-canvas" aria-label="Escena 3D interactiva del protocolo QKD BB84"></canvas>
-        <canvas id="paper-grain-overlay" aria-hidden="true"></canvas>
-        <svg id="label-overlay" aria-hidden="true"></svg>
+      <div class="stage-column">
+        <main class="viewport-frame" id="viewport-wrap">
+          <canvas id="gl-canvas" aria-label="Escena 3D interactiva del protocolo QKD BB84"></canvas>
+          <canvas id="paper-grain-overlay" aria-hidden="true"></canvas>
+          <svg id="label-overlay" aria-hidden="true"></svg>
 
-        <div class="demo-hud-banner" id="demo-hud-banner">
-          <span class="demo-dot det" id="demo-dot"></span>
-          <span id="demo-hud-text">Bases coinciden (+ y +) → Detector 1 (LED verde) • Bit = 0</span>
-        </div>
+          <div class="hud-pill hud-bottom-left">
+            <span>Toca botón 3D</span>
+            <span>•</span>
+            <span>Arrastrar: Rotar</span>
+            <span>•</span>
+            <span>Rueda / Shift: Zoom y mover</span>
+          </div>
 
-        <div class="hud-pill hud-bottom-left">
-          <span>Toca botón 3D</span>
-          <span>•</span>
-          <span>1 dedo / arrastre: Rotar</span>
-          <span>•</span>
-          <span>2 dedos / rueda: Zoom y mover</span>
-        </div>
+          <div class="hud-pill hud-status" id="status-live" aria-live="polite">Cargando modelos 3D…</div>
+          <div id="error-banner" class="error-banner" role="alert"></div>
+        </main>
 
-        <div class="hud-pill hud-status" id="status-live" aria-live="polite">Cargando modelos 3D…</div>
-        <div id="error-banner" class="error-banner" role="alert"></div>
-      </main>
+        <section id="phase-dock" class="phase-dock" aria-label="Fases del protocolo BB84 y resultado" aria-live="polite">
+          <div class="phase-track">
+            <div class="step-pill is-done" id="step-pill-1">
+              <span class="step-num" aria-hidden="true">1</span>
+              <div class="step-body">
+                <span class="step-label">Alice codifica</span>
+                <span class="step-val" id="step-val-1">+ · 0° (Bit 0)</span>
+              </div>
+            </div>
+            <div class="step-pill is-done" id="step-pill-2">
+              <span class="step-num" aria-hidden="true">2</span>
+              <div class="step-body">
+                <span class="step-label">Bob mide</span>
+                <span class="step-val" id="step-val-2">+ · 0°</span>
+              </div>
+            </div>
+            <div class="step-pill is-match" id="step-pill-3">
+              <span class="step-num" aria-hidden="true">3</span>
+              <div class="step-body">
+                <span class="step-label">Comparación</span>
+                <span class="step-val" id="step-val-3">✓ Conserva</span>
+              </div>
+            </div>
+            <div class="dock-key-pill">
+              <span>Clave secreta:</span>
+              <code id="dock-key-value">—</code>
+            </div>
+          </div>
+
+          <div class="verdict-banner is-verdict-match" id="verdict-banner">
+            <strong class="verdict-title" id="verdict-title">✓ BASES COINCIDEN (+ = +) — BIT 0 CONSERVADO</strong>
+            <span class="verdict-detail" id="verdict-detail">Misma base → medición determinista en Detector 1. El bit 0 se guarda en la clave secreta.</span>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 
@@ -1710,7 +2028,7 @@
 
     const state = {
       theme: "pencil",
-      ortho: true,
+      ortho: false,
       pencilIntensity: 35,
       strokeWidth: 1.15,
       paperOpacity: 35,
@@ -1726,6 +2044,7 @@
         active: true,
         autoRunning: false,
         autoStepIndex: 0,
+        phase: "compare",
         aliceBtnIdx: 0,
         bobBtnIdx: 0,
         alicePressedIdx: -1,
@@ -1739,10 +2058,9 @@
         events: []
       },
       cam: {
-        az: 0.78,
-        el: 0.44,
-        dist: 890,
-        orthoScale: 325,
+        az: -2.26,
+        el: 0.42,
+        dist: 1200,
         target: [0, 58, 0]
       }
     };
@@ -2183,8 +2501,8 @@
           : state.demo.bobBtnIdx === meshItem.btnMeta.idx;
         if (isSel && meshItem.isPlunger) {
           if (state.theme === "cad") return "#333333";
-          const accentCol = meshItem.btnMeta.side === "alice" ? "#2D6480" : "#2E6F56";
-          return state.theme === "pencil" ? mixHex(accentCol, ps.sub.buttons || ps.fill, 0.25) : accentCol;
+          const accentCol = meshItem.btnMeta.side === "alice" ? "#2b7a3d" : "#9e2a2b";
+          return state.theme === "pencil" ? mixHex(accentCol, ps.sub.buttons || ps.fill, 0.22) : accentCol;
         }
       }
       return ps.sub[role] || ps.fill;
@@ -2590,34 +2908,64 @@
       ctx.fillRect(0, 0, w, h);
     }
 
-    function getPortraitFit(aspect) {
-      return aspect < 1.55 ? (1.55 / Math.max(0.42, aspect)) : 1;
+    const FOV_RAD = (34 * Math.PI) / 180;
+
+    function getDefaultCamForAspect(aspect) {
+      const safeAspect = Math.max(0.4, aspect || 1);
+      const isPortrait = safeAspect < 0.95;
+      const az = isPortrait ? -2.70 : -2.26;
+      const el = isPortrait ? 0.46 : 0.42;
+      const target = isPortrait ? [0, 54, -40] : [0, 58, -25];
+
+      const cosEl = Math.cos(el), sinEl = Math.sin(el);
+      const sinAz = Math.sin(az), cosAz = Math.cos(az);
+      const eyeDir = [cosEl * sinAz, sinEl, cosEl * cosAz];
+      const zCam = eyeDir;
+      const xCam = V3.norm(V3.cross([0, 1, 0], zCam));
+      const yCam = V3.cross(zCam, xCam);
+
+      const tanHalfY = Math.tan(FOV_RAD / 2);
+      const fillW = isPortrait ? 0.94 : 0.90;
+      const fillH = isPortrait ? 0.88 : 0.85;
+      const gapShift = (state.gapMm - 170) / 2;
+      const zExt = 485 + gapShift;
+
+      let reqDist = 520;
+      for (const x of [-128, 128]) {
+        for (const y of [0, 165]) {
+          for (const z of [-zExt, zExt]) {
+            const dP = [x - target[0], y - target[1], z - target[2]];
+            const vx = Math.abs(V3.dot(dP, xCam));
+            const vy = Math.abs(V3.dot(dP, yCam));
+            const vz = V3.dot(dP, zCam);
+            const neededH = vz + vx / (fillW * safeAspect * tanHalfY);
+            const neededV = vz + vy / (fillH * tanHalfY);
+            if (neededH > reqDist) reqDist = neededH;
+            if (neededV > reqDist) reqDist = neededV;
+          }
+        }
+      }
+      return { az, el, dist: reqDist, target };
     }
 
     function getCameraData(aspect) {
-      const { az, el, dist, orthoScale, target } = state.cam;
-      const portraitFit = getPortraitFit(aspect);
-      const effDist = dist * portraitFit;
-      const effOrthoScale = orthoScale * portraitFit;
+      const { az, el, dist, target } = state.cam;
       const cosEl = Math.cos(el);
       const eye = [
-        target[0] + effDist * cosEl * Math.sin(az),
-        target[1] + effDist * Math.sin(el),
-        target[2] + effDist * cosEl * Math.cos(az)
+        target[0] + dist * cosEl * Math.sin(az),
+        target[1] + dist * Math.sin(el),
+        target[2] + dist * cosEl * Math.cos(az)
       ];
       const viewDir = V3.norm(V3.sub(target, eye));
       const view = M4.lookAt(eye, target, [0, 1, 0]);
-      const oNear = Math.min(-600, effDist - 1400);
-      const oFar = Math.max(2200, effDist + 1400);
-      const proj = state.ortho
-        ? M4.ortho(-effOrthoScale * aspect, effOrthoScale * aspect, -effOrthoScale, effOrthoScale, oNear, oFar)
-        : M4.perspective((34 * Math.PI) / 180, aspect, 15, Math.max(6000, effDist + 2500));
+      const proj = M4.perspective(FOV_RAD, aspect, 15, Math.max(6000, dist + 2500));
       return { eye, target, viewDir, view, proj };
     }
 
     let sceneComponents = [];
     let needsRender = true;
     let camAnim = null;
+    let userMovedCamera = false;
 
     function requestRender() {
       needsRender = true;
@@ -2980,14 +3328,32 @@
       const svg = document.getElementById("label-overlay");
       if (!svg) return;
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-      svg.setAttribute("aria-hidden", state.showLabels ? "false" : "true");
+      svg.setAttribute("aria-hidden", "false");
+      const bgHalo = (THEMES[state.theme] || THEMES.pencil).bg;
+      const isNarrow = W < 540;
+
       if (!state.showLabels) {
-        svg.innerHTML = "";
+        const gapShift = (state.gapMm - 170) / 2;
+        const aliceAnchor = projectPoint3D([-82, Y_BB_TOP + 2, -210 - gapShift], camData, W, H);
+        const bobAnchor = projectPoint3D([105, Y_BB_TOP + 2, 145 + gapShift], camData, W, H);
+        const fSize = isNarrow ? 15 : 18;
+        const pad = isNarrow ? 28 : 38;
+        let html = "";
+        if (aliceAnchor) {
+          const ax = Math.max(pad, Math.min(W - pad, aliceAnchor.x));
+          const ay = Math.max(24, Math.min(H - 14, aliceAnchor.y));
+          html += `<text x="${ax.toFixed(1)}" y="${ay.toFixed(1)}" font-family="IBM Plex Mono, Inter, sans-serif" font-size="${fSize}" font-weight="700" text-anchor="middle" stroke="${bgHalo}" stroke-width="5" paint-order="stroke" fill="#2b7a3d">Alice</text>`;
+        }
+        if (bobAnchor) {
+          const bx = Math.max(pad, Math.min(W - pad, bobAnchor.x));
+          const by = Math.max(24, Math.min(H - 14, bobAnchor.y));
+          html += `<text x="${bx.toFixed(1)}" y="${by.toFixed(1)}" font-family="IBM Plex Mono, Inter, sans-serif" font-size="${fSize}" font-weight="700" text-anchor="middle" stroke="${bgHalo}" stroke-width="5" paint-order="stroke" fill="#9e2a2b">Bob</text>`;
+        }
+        svg.innerHTML = html;
         return;
       }
+
       const items = getLabelItems(camData, W, H);
-      const isNarrow = W < 540;
-      const bgHalo = (THEMES[state.theme] || THEMES.pencil).bg;
       let html = "";
       for (const it of items) {
         const safeText = escapeXml(it.text);
@@ -2996,10 +3362,11 @@
           const ph = it.pillH || 22;
           const rx = it.x1 - pw * 0.5;
           const ry = it.y1 - ph * 0.5;
-          const tint = it.module === "alice" ? "rgba(220,234,242,0.92)" : "rgba(220,236,228,0.92)";
-          const stroke = it.module === "alice" ? "rgba(45,100,128,0.45)" : "rgba(46,111,86,0.45)";
-          html += `<rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${pw.toFixed(1)}" height="${ph}" rx="${(ph / 2).toFixed(1)}" fill="${tint}" stroke="${stroke}" stroke-width="1"/>`;
-          html += `<text x="${it.x1.toFixed(1)}" y="${(it.y1 + (isNarrow ? 3.5 : 4)).toFixed(1)}" font-family="Inter, system-ui, sans-serif" font-size="${isNarrow ? 10 : 11.5}" font-weight="700" fill="#1F2421" text-anchor="middle">${safeText}</text>`;
+          const tint = it.module === "alice" ? "#eaf5ec" : "#fbeeed";
+          const stroke = it.module === "alice" ? "#2b7a3d" : "#9e2a2b";
+          const txtCol = it.module === "alice" ? "#185226" : "#741a1b";
+          html += `<rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${pw.toFixed(1)}" height="${ph}" rx="6" fill="${tint}" stroke="${stroke}" stroke-width="1.35"/>`;
+          html += `<text x="${it.x1.toFixed(1)}" y="${(it.y1 + (isNarrow ? 3.5 : 4)).toFixed(1)}" font-family="IBM Plex Mono, Inter, sans-serif" font-size="${isNarrow ? 10 : 11.5}" font-weight="700" fill="${txtCol}" text-anchor="middle">${safeText}</text>`;
         } else {
           const pw = it.pillW || 110;
           const ph = it.pillH || 20;
@@ -3007,12 +3374,12 @@
           const rx = it.x1 - pw * 0.5;
           const ry = pillCenterY - ph * 0.5;
           const lineEndY = it.lane === "top" ? ry + ph : ry;
-          const strokeCol = it.module === "alice" ? "rgba(45,100,128,0.36)" : "rgba(46,111,86,0.36)";
+          const strokeCol = it.module === "alice" ? "#2b7a3d" : "#9e2a2b";
           html += `<polyline points="${it.x0.toFixed(1)},${it.y0.toFixed(1)} ${it.x1.toFixed(1)},${lineEndY.toFixed(1)}" fill="none" stroke="${bgHalo}" stroke-width="2.8" stroke-linecap="round"/>`;
-          html += `<polyline points="${it.x0.toFixed(1)},${it.y0.toFixed(1)} ${it.x1.toFixed(1)},${lineEndY.toFixed(1)}" fill="none" stroke="#454B47" stroke-width="1.15" stroke-linecap="round"/>`;
-          html += `<circle cx="${it.x0.toFixed(1)}" cy="${it.y0.toFixed(1)}" r="2.7" fill="#1F2421" stroke="${bgHalo}" stroke-width="1.2"/>`;
-          html += `<rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${pw.toFixed(1)}" height="${ph}" rx="8" fill="rgba(255,255,255,0.92)" stroke="${strokeCol}" stroke-width="1"/>`;
-          html += `<text x="${it.x1.toFixed(1)}" y="${(pillCenterY + (isNarrow ? 3.3 : 3.7)).toFixed(1)}" font-family="Inter, system-ui, sans-serif" font-size="${isNarrow ? 9.5 : 10.8}" font-weight="600" fill="#1F2421" text-anchor="middle">${safeText}</text>`;
+          html += `<polyline points="${it.x0.toFixed(1)},${it.y0.toFixed(1)} ${it.x1.toFixed(1)},${lineEndY.toFixed(1)}" fill="none" stroke="#1f2226" stroke-width="1.15" stroke-linecap="round"/>`;
+          html += `<circle cx="${it.x0.toFixed(1)}" cy="${it.y0.toFixed(1)}" r="2.7" fill="#181a1d" stroke="${bgHalo}" stroke-width="1.2"/>`;
+          html += `<rect x="${rx.toFixed(1)}" y="${ry.toFixed(1)}" width="${pw.toFixed(1)}" height="${ph}" rx="6" fill="rgba(255,255,255,0.95)" stroke="${strokeCol}" stroke-width="1.15"/>`;
+          html += `<text x="${it.x1.toFixed(1)}" y="${(pillCenterY + (isNarrow ? 3.3 : 3.7)).toFixed(1)}" font-family="Inter, system-ui, sans-serif" font-size="${isNarrow ? 9.5 : 10.8}" font-weight="600" fill="#181a1d" text-anchor="middle">${safeText}</text>`;
         }
       }
       svg.innerHTML = html;
@@ -3079,39 +3446,39 @@
     }
 
     // =========================================================================
-    // 6. CAMERA PRESETS, THEMES, BB84 DEMO CONTROLLER & UI SYNC
+    // 6. CAMERA DEFAULT PERSPECTIVE RESET, BB84 4-BEAT SEQUENTIAL CONTROLLER & UI
     // =========================================================================
-    const PRESETS = {
-      "iso-ref": { az: 0.78, el: 0.44, dist: 890, orthoScale: 325, target: [0, 58, 0] },
-      "alice":   { az: 0.68, el: 0.42, dist: 560, orthoScale: 215, target: [10, 68, -275] },
-      "bob":     { az: 0.86, el: 0.44, dist: 580, orthoScale: 225, target: [-15, 68, 275] },
-      "top":     { az: 1.5708, el: 1.54, dist: 1200, orthoScale: 340, target: [0, 50, 0] }
-    };
+    function getViewportAspect() {
+      const wrap = document.getElementById("viewport-wrap");
+      const rect = wrap ? wrap.getBoundingClientRect() : null;
+      if (rect && rect.width > 10 && rect.height > 10) {
+        return rect.width / rect.height;
+      }
+      return (window.innerWidth || 1280) / Math.max(1, window.innerHeight || 720);
+    }
 
-    function goToPreset(key) {
-      const presetKey = key === "general" ? "iso-ref" : key;
-      const p = PRESETS[presetKey];
-      if (!p) return;
-      document.querySelectorAll("[data-preset]").forEach(btn => {
-        btn.setAttribute("aria-pressed", btn.dataset.preset === presetKey ? "true" : "false");
-      });
-
+    function resetToDefaultView(instant = false) {
+      userMovedCamera = false;
+      const targetCam = getDefaultCamForAspect(getViewportAspect());
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const gapShift = (state.gapMm - 170) / 2;
-      const targetAdj = [...p.target];
-      if (presetKey === "alice") targetAdj[2] -= gapShift;
-      if (presetKey === "bob") targetAdj[2] += gapShift;
-
-      if (reduceMotion) {
-        Object.assign(state.cam, { ...p, target: targetAdj });
+      if (instant || reduceMotion) {
+        camAnim = null;
+        Object.assign(state.cam, {
+          az: targetCam.az,
+          el: targetCam.el,
+          dist: targetCam.dist,
+          target: [...targetCam.target]
+        });
         requestRender();
         return;
       }
       const start = {
-        az: state.cam.az, el: state.cam.el, dist: state.cam.dist,
-        orthoScale: state.cam.orthoScale, target: [...state.cam.target]
+        az: state.cam.az,
+        el: state.cam.el,
+        dist: state.cam.dist,
+        target: [...state.cam.target]
       };
-      camAnim = { start, end: { ...p, target: targetAdj }, t0: performance.now(), dur: 360 };
+      camAnim = { start, end: targetCam, t0: performance.now(), dur: 360 };
     }
 
     function applyTheme() {
@@ -3136,7 +3503,7 @@
       const R = 100 - T;
       const pr = document.getElementById("physics-readout");
       if (pr) {
-        pr.innerHTML = `<span>Δθ = ${d}°</span><span>T = ${T}%</span><span>R = ${R}%</span>`;
+        pr.innerHTML = `<span>Δθ = ${d}°</span><span>I₁ = I₀ cos²(Δθ) = ${T}%</span><span>I₂ = I₀ sin²(Δθ) = ${R}%</span>`;
       }
       const badge = document.getElementById("result-angle-badge");
       if (badge) badge.textContent = `Δθ = ${d}°`;
@@ -3146,48 +3513,137 @@
     let bobMotorAnim = null;
     let autoDemoTimers = [];
     let pressTimers = { alice: null, bob: null };
+    let demoRoundToken = 0;
 
     function clearAutoDemoTimers() {
       for (const tid of autoDemoTimers) clearTimeout(tid);
       autoDemoTimers = [];
     }
 
+    function scheduleRoundTimer(token, ms, fn) {
+      const tid = setTimeout(() => {
+        if (token !== demoRoundToken) return;
+        fn();
+      }, ms);
+      autoDemoTimers.push(tid);
+      return tid;
+    }
+
     function syncAutoDemoButton() {
+      const running = !!state.demo.autoRunning;
+
       const btn = document.getElementById("btn-demo-auto");
       const label = document.getElementById("btn-demo-auto-label");
       const icon = document.getElementById("btn-demo-auto-icon");
-      if (!btn || !label || !icon) return;
-      const running = !!state.demo.autoRunning;
-      btn.setAttribute("aria-pressed", running ? "true" : "false");
-      btn.classList.toggle("is-running", running);
-      label.textContent = running ? "Detener Demo" : "Demo Automática";
-      icon.innerHTML = running
-        ? '<rect x="6" y="6" width="12" height="12" rx="2"/>'
-        : '<polygon points="5 3 19 12 5 21 5 3"/>';
+      if (btn && label && icon) {
+        btn.setAttribute("aria-pressed", running ? "true" : "false");
+        btn.classList.toggle("is-running", running);
+        label.textContent = running ? "Pausar Demo" : "Demo Automática";
+        icon.innerHTML = running
+          ? '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>'
+          : '<polygon points="5 3 19 12 5 21 5 3"/>';
+      }
+
+      const topBtn = document.getElementById("btn-topbar-play");
+      const topLabel = document.getElementById("btn-topbar-play-label");
+      const topIcon = document.getElementById("btn-topbar-play-icon");
+      if (topBtn && topLabel && topIcon) {
+        topBtn.setAttribute("aria-pressed", running ? "true" : "false");
+        topLabel.textContent = running ? "Pausar" : "Reanudar";
+        topIcon.innerHTML = running
+          ? '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>'
+          : '<polygon points="5 3 19 12 5 21 5 3"/>';
+      }
     }
 
     function stopAutoDemo(silent = false) {
+      demoRoundToken++;
       clearAutoDemoTimers();
       const wasRunning = state.demo.autoRunning;
       state.demo.autoRunning = false;
       syncAutoDemoButton();
       if (wasRunning && !silent) {
-        setStatus("Demo automática detenida");
+        setStatus("Demo automática en pausa");
       }
     }
 
-    function updateDemoHUD(modeClass, msg) {
-      const banner = document.getElementById("demo-hud-banner");
-      const dot = document.getElementById("demo-dot");
-      const txt = document.getElementById("demo-hud-text");
-      if (!banner || !dot || !txt) return;
-      if (!state.demo.active) {
-        banner.hidden = true;
-        return;
+    function updatePhaseDock() {
+      const aSpec = ALICE_BUTTON_SPECS[state.demo.aliceBtnIdx] || { deg: Math.round(state.aliceDeg), base: "+", bit: 0 };
+      const bSpec = BOB_BUTTON_SPECS[state.demo.bobBtnIdx] || { deg: Math.round(state.bobDeg), base: "+" };
+      const p1 = document.getElementById("step-pill-1");
+      const p2 = document.getElementById("step-pill-2");
+      const p3 = document.getElementById("step-pill-3");
+      const v1 = document.getElementById("step-val-1");
+      const v2 = document.getElementById("step-val-2");
+      const v3 = document.getElementById("step-val-3");
+      const banner = document.getElementById("verdict-banner");
+      const title = document.getElementById("verdict-title");
+      const detail = document.getElementById("verdict-detail");
+      const keyDock = document.getElementById("dock-key-value");
+      if (!p1 || !p2 || !p3 || !banner || !title || !detail) return;
+
+      const siftedBits = state.demo.events.filter(e => e.match).map(e => e.key).join(" ");
+      if (keyDock) keyDock.textContent = siftedBits.length > 0 ? siftedBits : "—";
+
+      const phase = state.demo.phase;
+      const det = state.demo.activeDetector;
+      const d = Math.abs(aSpec.deg - bSpec.deg);
+      const rad = (d * Math.PI) / 180;
+      const T = Math.round(Math.pow(Math.cos(rad), 2) * 100);
+      const R = 100 - T;
+      const match = aSpec.base === bSpec.base;
+
+      p1.className = "step-pill";
+      p2.className = "step-pill";
+      p3.className = "step-pill";
+
+      if (phase === "alice") {
+        p1.classList.add("is-active-alice");
+        v1.textContent = `${aSpec.base} · ${aSpec.deg}° (Bit ${aSpec.bit})`;
+        v2.textContent = "Siguiente paso";
+        v3.textContent = "Esperando…";
+        banner.className = "verdict-banner is-phase-alice";
+        title.textContent = `① ALICE CODIFICA: Base ${aSpec.base} · Bit ${aSpec.bit} (${aSpec.deg}°)`;
+        detail.textContent = `Girando motor paso a paso de Alice hacia ${aSpec.deg}°… (láser apagado).`;
+      } else if (phase === "bob") {
+        p1.classList.add("is-done");
+        p2.classList.add("is-active-bob");
+        v1.textContent = `${aSpec.base} · ${aSpec.deg}° (Bit ${aSpec.bit})`;
+        v2.textContent = `Base ${bSpec.base} (${bSpec.deg}°)`;
+        v3.textContent = "Esperando…";
+        banner.className = "verdict-banner is-phase-bob";
+        title.textContent = `② BOB ELIGE BASE DE MEDICIÓN: Base ${bSpec.base} (${bSpec.deg}°)`;
+        detail.textContent = `Orientando polarizador analizador de Bob hacia ${bSpec.deg}°… (láser apagado).`;
+      } else if (phase === "laser") {
+        p1.classList.add("is-done");
+        p2.classList.add("is-active-laser");
+        v1.textContent = `${aSpec.base} · ${aSpec.deg}° (Bit ${aSpec.bit})`;
+        v2.textContent = `${bSpec.base} · Det. ${det}`;
+        v3.textContent = "Comparando…";
+        banner.className = "verdict-banner is-phase-laser";
+        title.textContent = `② DISPARO LÁSER 650 nm → DETECTOR ${det} DE BOB`;
+        detail.textContent = match
+          ? `Misma base (${aSpec.base}): todo el haz entra al Detector ${det} (LED verde encendido, T = ${T}%, R = ${R}%).`
+          : `Bases distintas (${aSpec.base} ≠ ${bSpec.base}): el haz se divide 50/50 en el PBS hacia ambos detectores → se ilumina Detector ${det}.`;
+      } else {
+        p1.classList.add("is-done");
+        p2.classList.add("is-done");
+        v1.textContent = `${aSpec.base} · ${aSpec.deg}° (Bit ${aSpec.bit})`;
+        v2.textContent = `${bSpec.base} · Det. ${det}`;
+        if (state.demo.lastMatch) {
+          p3.classList.add("is-match");
+          v3.textContent = `✓ Bit ${state.demo.lastBit}`;
+          banner.className = "verdict-banner is-verdict-match";
+          title.textContent = `✓ BASES COINCIDEN (${aSpec.base} = ${bSpec.base}) — BIT ${state.demo.lastBit} CONSERVADO`;
+          detail.textContent = `Misma base → medición determinista en Detector ${det}. El bit ${state.demo.lastBit} se guarda en la clave secreta.`;
+        } else {
+          p3.classList.add("is-discard");
+          v3.textContent = "✕ Descarta (-)";
+          banner.className = "verdict-banner is-verdict-discard";
+          title.textContent = `✕ BASES DISTINTAS (${aSpec.base} ≠ ${bSpec.base}) — MEDICIÓN DESCARTADA`;
+          detail.textContent = `Base opuesta → haz dividido 50/50 en el PBS (resultado aleatorio en Det. ${det}). Esta medición se descarta (-).`;
+        }
       }
-      banner.hidden = false;
-      dot.className = `demo-dot ${modeClass || ""}`.trim();
-      txt.textContent = msg;
     }
 
     function updateResultCardAndLEDs() {
@@ -3202,12 +3658,25 @@
       const det1Sub = document.getElementById("led-det1-sub");
       const det2Sub = document.getElementById("led-det2-sub");
 
-      if (state.demo.moving) {
+      if (state.demo.phase === "alice") {
         phaseEl.className = "result-phase moving";
-        phaseEl.textContent = "Girando stepper… Láser apagado";
-        expEl.textContent = `Alineando polarizadores mecánicos mediante engranajes (Alice → ${aSpec.deg}° • Base ${aSpec.base}, Bob → ${bSpec.deg}° • Base ${bSpec.base}). El pulso láser se disparará al estabilizarse.`;
+        phaseEl.textContent = `① Alice codifica (${aSpec.base}, ${aSpec.deg}°)`;
+        expEl.textContent = `Girando motor paso a paso de Alice hacia ${aSpec.deg}° (Bit ${aSpec.bit}). El láser permanecerá apagado hasta terminar.`;
         bitEl.className = "result-bit-pill";
-        bitEl.textContent = "Midiendo…";
+        bitEl.textContent = "Preparando fotón…";
+        det1El.classList.remove("is-lit");
+        det2El.classList.remove("is-lit");
+        det1Sub.textContent = "Láser apagado";
+        det2Sub.textContent = "Láser apagado";
+        return;
+      }
+
+      if (state.demo.phase === "bob") {
+        phaseEl.className = "result-phase moving-bob";
+        phaseEl.textContent = `② Bob elige base ${bSpec.base} (${bSpec.deg}°)`;
+        expEl.textContent = `Girando motor paso a paso de Bob hacia ${bSpec.deg}°. En breve se disparará el pulso láser de 650 nm.`;
+        bitEl.className = "result-bit-pill";
+        bitEl.textContent = "Alineando analizador…";
         det1El.classList.remove("is-lit");
         det2El.classList.remove("is-lit");
         det1Sub.textContent = "Láser apagado";
@@ -3221,16 +3690,24 @@
       const T = Math.round(Math.pow(Math.cos(rad), 2) * 100);
       const R = 100 - T;
 
-      if (state.demo.lastMatch) {
+      if (state.demo.phase === "laser") {
+        phaseEl.className = "result-phase laser";
+        phaseEl.textContent = `② Pulso láser → Detector ${det}`;
+        expEl.textContent = state.demo.lastMatch
+          ? `Alice (${aSpec.base}, ${aSpec.deg}°) y Bob (${bSpec.base}, ${bSpec.deg}°) coinciden: T = ${T}%, R = ${R}%. Todo el haz ilumina el Detector ${det}.`
+          : `Bases conjugadas (${aSpec.base} ≠ ${bSpec.base}): el haz se divide 50/50 en el PBS hacia ambos detectores; se enciende el Detector ${det}.`;
+        bitEl.className = "result-bit-pill";
+        bitEl.textContent = "Comparando bases…";
+      } else if (state.demo.lastMatch) {
         phaseEl.className = "result-phase det";
-        phaseEl.textContent = `Bases Coinciden (${aSpec.base})`;
-        expEl.textContent = `Alice (Base ${aSpec.base}, ${aSpec.deg}°) y Bob (Base ${bSpec.base}, ${bSpec.deg}°) coinciden. Ley de Malus: T = ${T}%, R = ${R}%. El haz llega al Detector ${det} (LED verde) y el bit se conserva.`;
+        phaseEl.textContent = `③ Bases Coinciden (${aSpec.base} = ${bSpec.base})`;
+        expEl.textContent = `Alice (Base ${aSpec.base}, ${aSpec.deg}°) y Bob (Base ${bSpec.base}, ${bSpec.deg}°) coinciden. Ley de Malus: T = ${T}%, R = ${R}%. Detector ${det} activo; el bit se conserva.`;
         bitEl.className = "result-bit-pill is-kept";
         bitEl.textContent = `${state.demo.lastBit} (Conservado en clave)`;
       } else {
         phaseEl.className = "result-phase split";
-        phaseEl.textContent = `Bases Distintas (${aSpec.base} ≠ ${bSpec.base})`;
-        expEl.textContent = `Bases conjugadas (Alice ${aSpec.base} y Bob ${bSpec.base}, Δθ = ${d}°): T = ${T}%, R = ${R}%. El haz se divide entre ambos detectores en el PBS; en este pulso se ilumina el Detector ${det} y el bit se descarta.`;
+        phaseEl.textContent = `③ Bases Distintas (${aSpec.base} ≠ ${bSpec.base})`;
+        expEl.textContent = `Bases opuestas (Alice ${aSpec.base} y Bob ${bSpec.base}, Δθ = ${d}°): T = ${T}%, R = ${R}%. Haz dividido 50/50 en el PBS; la medición se descarta.`;
         bitEl.className = "result-bit-pill is-discarded";
         bitEl.textContent = "Descartado (-)";
       }
@@ -3273,11 +3750,15 @@
     function syncDemoUI() {
       document.querySelectorAll("[data-demo-alice]").forEach(btn => {
         const idx = parseInt(btn.dataset.demoAlice, 10);
-        btn.classList.toggle("active", idx === state.demo.aliceBtnIdx);
+        const isActive = idx === state.demo.aliceBtnIdx;
+        btn.classList.toggle("active", isActive);
+        btn.setAttribute("aria-pressed", String(isActive));
       });
       document.querySelectorAll("[data-demo-bob]").forEach(btn => {
         const idx = parseInt(btn.dataset.demoBob, 10);
-        btn.classList.toggle("active", idx === state.demo.bobBtnIdx);
+        const isActive = idx === state.demo.bobBtnIdx;
+        btn.classList.toggle("active", isActive);
+        btn.setAttribute("aria-pressed", String(isActive));
       });
 
       const aSpec = ALICE_BUTTON_SPECS[state.demo.aliceBtnIdx];
@@ -3291,11 +3772,11 @@
 
       updateResultCardAndLEDs();
       renderReconTable();
+      updatePhaseDock();
       syncAutoDemoButton();
     }
 
-    function fireDemoLaserAndMeasure(options = {}) {
-      if (!state.demo.active) return;
+    function prepareLaserMeasurement(options = {}) {
       const aSpec = ALICE_BUTTON_SPECS[state.demo.aliceBtnIdx] || { deg: Math.round(state.aliceDeg), base: "+", bit: 0 };
       const bSpec = BOB_BUTTON_SPECS[state.demo.bobBtnIdx] || { deg: Math.round(state.bobDeg), base: "+" };
       const match = aSpec.base === bSpec.base;
@@ -3307,6 +3788,7 @@
             ? options.forceDetector
             : (Math.random() < T ? 1 : 2));
 
+      state.demo.phase = "laser";
       state.demo.moving = false;
       state.demo.laserOn = true;
       state.demo.activeDetector = det;
@@ -3314,6 +3796,18 @@
       state.demo.lastBit = aSpec.bit;
       state.demo.lastKey = match ? String(aSpec.bit) : "-";
 
+      setStatus(match
+        ? `Pulso 650 nm → Detector ${det} (Misma base)`
+        : `Pulso 650 nm → Haz dividido 50/50 en PBS • Detector ${det}`);
+      updatePhysicsReadout();
+      syncDemoUI();
+      requestRender();
+    }
+
+    function commitComparePhase(options = {}) {
+      const aSpec = ALICE_BUTTON_SPECS[state.demo.aliceBtnIdx] || { deg: Math.round(state.aliceDeg), base: "+", bit: 0 };
+      const bSpec = BOB_BUTTON_SPECS[state.demo.bobBtnIdx] || { deg: Math.round(state.bobDeg), base: "+" };
+      state.demo.phase = "compare";
       if (!options.skipLog) {
         const nextId = state.demo.events.length + 1;
         state.demo.events.push({
@@ -3322,22 +3816,22 @@
           aliceDeg: aSpec.deg,
           bobBase: bSpec.base,
           bobDeg: bSpec.deg,
-          match,
+          match: state.demo.lastMatch,
           key: state.demo.lastKey,
-          detector: det
+          detector: state.demo.activeDetector
         });
       }
-
-      if (match) {
-        updateDemoHUD("det", `Bases coinciden (${aSpec.base} y ${bSpec.base}) → Detector ${det} (LED verde) • Bit = ${aSpec.bit}`);
-        setStatus(`Pulso 650 nm → Detector ${det} (Bases coinciden • Bit ${aSpec.bit})`);
-      } else {
-        updateDemoHUD("split", `Bases distintas (${aSpec.base} ≠ ${bSpec.base}) → Haz dividido en PBS • Detector ${det} (LED verde) • Descartado (-)`);
-        setStatus(`Pulso 650 nm → Haz dividido en PBS • Detector ${det} (Descartado)`);
-      }
-      updatePhysicsReadout();
+      setStatus(state.demo.lastMatch
+        ? `Bases coinciden (${aSpec.base}) → Bit ${state.demo.lastBit} conservado`
+        : `Bases distintas (${aSpec.base} ≠ ${bSpec.base}) → Medición descartada`);
       syncDemoUI();
       requestRender();
+    }
+
+    function fireDemoLaserAndMeasure(options = {}) {
+      if (!state.demo.active) return;
+      prepareLaserMeasurement(options);
+      commitComparePhase(options);
     }
 
     function setDemoActive(active) {
@@ -3359,14 +3853,12 @@
         state.demo.moving = false;
         state.demo.laserOn = true;
         state.demo.activeDetector = 0;
-        updateDemoHUD("", "");
         syncDemoUI();
         requestRender();
       }
     }
 
-    function triggerAliceButton(idx, options = {}) {
-      if (!options.fromAuto) stopAutoDemo(true);
+    function animateAliceTo(idx, durMs, onDone) {
       const spec = ALICE_BUTTON_SPECS[idx];
       if (!spec) return;
       state.demo.active = true;
@@ -3376,19 +3868,26 @@
       pressTimers.alice = setTimeout(() => {
         state.demo.alicePressedIdx = -1;
         requestRender();
-      }, 240);
+      }, 260);
 
+      state.demo.phase = "alice";
       state.demo.moving = true;
       state.demo.laserOn = false;
       state.demo.activeDetector = 0;
       const startDeg = state.aliceDeg;
-      const dur = options.instant ? 0 : (Math.abs(spec.deg - startDeg) < 1 ? 150 : 620);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const dur = reduceMotion ? 0 : durMs;
 
-      if (dur === 0) {
+      setStatus(`① Alice codifica → Base ${spec.base}, Bit ${spec.bit} (${spec.deg}°)`);
+      syncDemoUI();
+      requestRender();
+
+      if (dur <= 0) {
         aliceMotorAnim = null;
         state.aliceDeg = spec.deg;
-        if (!bobMotorAnim) fireDemoLaserAndMeasure(options);
-        else { syncDemoUI(); requestRender(); }
+        updatePhysicsReadout();
+        requestRender();
+        if (onDone) onDone();
         return;
       }
 
@@ -3397,16 +3896,11 @@
         endDeg: spec.deg,
         t0: performance.now(),
         dur,
-        options
+        onDone
       };
-      updateDemoHUD("moving", `Girando stepper… Láser apagado (Alice B${idx + 1}: ${spec.deg}°, Base ${spec.base})`);
-      setStatus(`Girando stepper Alice → ${spec.deg}°…`);
-      syncDemoUI();
-      requestRender();
     }
 
-    function triggerBobButton(idx, options = {}) {
-      if (!options.fromAuto) stopAutoDemo(true);
+    function animateBobTo(idx, durMs, onDone) {
       const spec = BOB_BUTTON_SPECS[idx];
       if (!spec) return;
       state.demo.active = true;
@@ -3416,19 +3910,26 @@
       pressTimers.bob = setTimeout(() => {
         state.demo.bobPressedIdx = -1;
         requestRender();
-      }, 240);
+      }, 260);
 
+      state.demo.phase = "bob";
       state.demo.moving = true;
       state.demo.laserOn = false;
       state.demo.activeDetector = 0;
       const startDeg = state.bobDeg;
-      const dur = options.instant ? 0 : (Math.abs(spec.deg - startDeg) < 1 ? 150 : 540);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const dur = reduceMotion ? 0 : durMs;
 
-      if (dur === 0) {
+      setStatus(`② Bob elige base → Base ${spec.base} (${spec.deg}°)`);
+      syncDemoUI();
+      requestRender();
+
+      if (dur <= 0) {
         bobMotorAnim = null;
         state.bobDeg = spec.deg;
-        if (!aliceMotorAnim) fireDemoLaserAndMeasure(options);
-        else { syncDemoUI(); requestRender(); }
+        updatePhysicsReadout();
+        requestRender();
+        if (onDone) onDone();
         return;
       }
 
@@ -3437,44 +3938,103 @@
         endDeg: spec.deg,
         t0: performance.now(),
         dur,
-        options
+        onDone
       };
-      updateDemoHUD("moving", `Girando stepper… Láser apagado (Bob Base ${spec.base}: ${spec.deg}°)`);
-      setStatus(`Girando stepper Bob → ${spec.deg}°…`);
-      syncDemoUI();
-      requestRender();
+    }
+
+    function triggerAliceButton(idx, options = {}) {
+      const spec = ALICE_BUTTON_SPECS[idx];
+      if (!spec) return;
+      stopAutoDemo(true);
+      aliceMotorAnim = null;
+      bobMotorAnim = null;
+      const token = ++demoRoundToken;
+      const motorDur = options.instant ? 0 : 900;
+      const afterHold = options.instant ? 0 : 450;
+      const laserHold = options.instant ? 0 : 1300;
+
+      animateAliceTo(idx, motorDur, () => {
+        if (token !== demoRoundToken) return;
+        scheduleRoundTimer(token, afterHold, () => {
+          prepareLaserMeasurement(options);
+          scheduleRoundTimer(token, laserHold, () => {
+            commitComparePhase(options);
+          });
+        });
+      });
+    }
+
+    function triggerBobButton(idx, options = {}) {
+      const spec = BOB_BUTTON_SPECS[idx];
+      if (!spec) return;
+      stopAutoDemo(true);
+      aliceMotorAnim = null;
+      bobMotorAnim = null;
+      const token = ++demoRoundToken;
+      const motorDur = options.instant ? 0 : 850;
+      const afterHold = options.instant ? 0 : 450;
+      const laserHold = options.instant ? 0 : 1300;
+
+      animateBobTo(idx, motorDur, () => {
+        if (token !== demoRoundToken) return;
+        scheduleRoundTimer(token, afterHold, () => {
+          prepareLaserMeasurement(options);
+          scheduleRoundTimer(token, laserHold, () => {
+            commitComparePhase(options);
+          });
+        });
+      });
     }
 
     const AUTO_INTRO_STEPS = [
-      { alice: 1, bob: 0 }, // +/+ Bit 1
-      { alice: 3, bob: 0 }, // ×/+ Split
-      { alice: 0, bob: 1 }, // +/× Split
-      { alice: 2, bob: 1 }  // ×/× Bit 0
+      { alice: 1, bob: 0 }, // +/+ Bit 1 -> Conservado
+      { alice: 3, bob: 0 }, // ×/+ Split -> Descartado
+      { alice: 0, bob: 1 }, // +/× Split -> Descartado
+      { alice: 2, bob: 1 }  // ×/× Bit 0 -> Conservado
     ];
 
-    function scheduleNextAutoStep(delayMs = 1900) {
+    function runAutoRound() {
       if (!state.demo.autoRunning) return;
-      const tid = setTimeout(() => {
-        if (!state.demo.autoRunning) return;
-        const stepIdx = state.demo.autoStepIndex++;
-        let nextA, nextB;
-        if (stepIdx < AUTO_INTRO_STEPS.length) {
-          nextA = AUTO_INTRO_STEPS[stepIdx].alice;
-          nextB = AUTO_INTRO_STEPS[stepIdx].bob;
-        } else {
-          do {
-            nextA = Math.floor(Math.random() * ALICE_BUTTON_SPECS.length);
-            nextB = Math.floor(Math.random() * BOB_BUTTON_SPECS.length);
-          } while (nextA === state.demo.aliceBtnIdx && nextB === state.demo.bobBtnIdx);
-        }
+      const token = ++demoRoundToken;
+      aliceMotorAnim = null;
+      bobMotorAnim = null;
 
-        const needBob = nextB !== state.demo.bobBtnIdx || stepIdx === 0;
-        const needAlice = nextA !== state.demo.aliceBtnIdx || !needBob;
-        if (needBob) triggerBobButton(nextB, { fromAuto: true });
-        if (needAlice) triggerAliceButton(nextA, { fromAuto: true });
-        scheduleNextAutoStep(1900);
-      }, delayMs);
-      autoDemoTimers.push(tid);
+      const stepIdx = state.demo.autoStepIndex++;
+      let nextA, nextB;
+      if (stepIdx < AUTO_INTRO_STEPS.length) {
+        nextA = AUTO_INTRO_STEPS[stepIdx].alice;
+        nextB = AUTO_INTRO_STEPS[stepIdx].bob;
+      } else {
+        do {
+          nextA = Math.floor(Math.random() * ALICE_BUTTON_SPECS.length);
+          nextB = Math.floor(Math.random() * BOB_BUTTON_SPECS.length);
+        } while (nextA === state.demo.aliceBtnIdx && nextB === state.demo.bobBtnIdx);
+      }
+
+      // Beat 1: Alice encodes (1150ms motor + 1250ms hold)
+      animateAliceTo(nextA, 1150, () => {
+        if (token !== demoRoundToken || !state.demo.autoRunning) return;
+        scheduleRoundTimer(token, 1250, () => {
+          if (!state.demo.autoRunning) return;
+          // Beat 2: Bob selects basis (1000ms motor + 1150ms hold)
+          animateBobTo(nextB, 1000, () => {
+            if (token !== demoRoundToken || !state.demo.autoRunning) return;
+            scheduleRoundTimer(token, 1150, () => {
+              if (!state.demo.autoRunning) return;
+              // Beat 3: Laser fires (2200ms hold)
+              prepareLaserMeasurement({});
+              scheduleRoundTimer(token, 2200, () => {
+                if (!state.demo.autoRunning) return;
+                // Beat 4: Compare bases & show verdict (3900ms hold)
+                commitComparePhase({});
+                scheduleRoundTimer(token, 3900, () => {
+                  if (state.demo.autoRunning) runAutoRound();
+                });
+              });
+            });
+          });
+        });
+      });
     }
 
     function runAutoDemoSequence() {
@@ -3483,8 +4043,11 @@
       state.demo.autoRunning = true;
       state.demo.autoStepIndex = 0;
       syncAutoDemoButton();
-      setStatus("Demo automática continua iniciada");
-      scheduleNextAutoStep(60);
+      setStatus("Demo paso a paso iniciada");
+      const token = ++demoRoundToken;
+      scheduleRoundTimer(token, 140, () => {
+        if (state.demo.autoRunning) runAutoRound();
+      });
     }
 
     function startAutoDemo() {
@@ -3522,12 +4085,7 @@
       }
 
       function applyPanDelta(dx, dy) {
-        const rect = canvas.getBoundingClientRect();
-        const aspect = rect.width / Math.max(1, rect.height);
-        const portraitFit = getPortraitFit(aspect);
-        const factor = state.ortho
-          ? ((state.cam.orthoScale * portraitFit) / 360)
-          : ((state.cam.dist * portraitFit) / 900);
+        const factor = state.cam.dist / 900;
         const { az, el } = state.cam;
         const cosEl = Math.cos(el), sinEl = Math.sin(el);
         const sinAz = Math.sin(az), cosAz = Math.cos(az);
@@ -3582,6 +4140,7 @@
           if (tapCandidate && tapCandidate.pointerId === e.pointerId) {
             tapCandidate.movedDist += Math.hypot(dx, dy);
           }
+          if (Math.hypot(dx, dy) > 0.5) userMovedCamera = true;
           if (dragMode === "orbit") {
             state.cam.az -= dx * 0.0065;
             state.cam.el = Math.max(-1.45, Math.min(1.55, state.cam.el + dy * 0.0065));
@@ -3590,11 +4149,11 @@
           }
           requestRender();
         } else if (activePointers.size >= 2) {
+          userMovedCamera = true;
           const m = getTwoPointerMetrics();
           const newDist = Math.max(10, m.dist);
           const zoomScale = lastPinchDist / newDist;
-          state.cam.dist = Math.max(220, Math.min(2800, state.cam.dist * zoomScale));
-          state.cam.orthoScale = Math.max(95, Math.min(1100, state.cam.orthoScale * zoomScale));
+          state.cam.dist = Math.max(180, Math.min(3400, state.cam.dist * zoomScale));
           applyPanDelta(m.midX - lastMidX, m.midY - lastMidY);
           lastPinchDist = newDist;
           lastMidX = m.midX;
@@ -3636,9 +4195,9 @@
 
       canvas.addEventListener("wheel", e => {
         e.preventDefault();
+        userMovedCamera = true;
         const scale = Math.exp(e.deltaY * 0.0011);
-        state.cam.dist = Math.max(220, Math.min(2800, state.cam.dist * scale));
-        state.cam.orthoScale = Math.max(95, Math.min(1100, state.cam.orthoScale * scale));
+        state.cam.dist = Math.max(180, Math.min(3400, state.cam.dist * scale));
         requestRender();
       }, { passive: false });
     }
@@ -3651,18 +4210,29 @@
       const sidebar = document.getElementById("control-panel");
       const workspace = document.getElementById("workspace");
       if (panelBtn && sidebar && workspace) {
+        const initialCollapsed = sidebar.classList.contains("sidebar-collapsed");
+        sidebar.inert = initialCollapsed;
+        sidebar.setAttribute("aria-hidden", String(initialCollapsed));
         panelBtn.addEventListener("click", () => {
           const collapsed = sidebar.classList.toggle("sidebar-collapsed");
           workspace.classList.toggle("workspace-collapsed", collapsed);
           panelBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+          sidebar.inert = collapsed;
+          sidebar.setAttribute("aria-hidden", String(collapsed));
+          if (!userMovedCamera) resetToDefaultView(true);
           requestRender();
         });
+      }
+
+      const topPlayBtn = document.getElementById("btn-topbar-play");
+      if (topPlayBtn) {
+        topPlayBtn.addEventListener("click", () => toggleAutoDemo());
       }
 
       const resetViewBtn = document.getElementById("btn-restaurar-vista");
       if (resetViewBtn) {
         resetViewBtn.addEventListener("click", () => {
-          goToPreset("iso-ref");
+          resetToDefaultView(false);
           setStatus("Vista general restaurada");
         });
       }
@@ -3676,20 +4246,6 @@
           requestRender();
         });
       }
-
-      const orthoBtn = document.getElementById("btn-ortho-toggle");
-      if (orthoBtn) {
-        orthoBtn.addEventListener("click", () => {
-          state.ortho = !state.ortho;
-          orthoBtn.setAttribute("aria-pressed", state.ortho ? "true" : "false");
-          orthoBtn.textContent = state.ortho ? "Ortográfica" : "Perspectiva";
-          requestRender();
-        });
-      }
-
-      document.querySelectorAll("[data-preset]").forEach(btn => {
-        btn.addEventListener("click", () => goToPreset(btn.dataset.preset));
-      });
 
       document.querySelectorAll("[data-demo-alice]").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -3705,8 +4261,14 @@
 
       document.getElementById("btn-demo-pulse").addEventListener("click", () => {
         stopAutoDemo(true);
-        if (!state.demo.active) setDemoActive(true);
-        else fireDemoLaserAndMeasure();
+        aliceMotorAnim = null;
+        bobMotorAnim = null;
+        const token = ++demoRoundToken;
+        state.demo.active = true;
+        prepareLaserMeasurement({});
+        scheduleRoundTimer(token, 1200, () => {
+          commitComparePhase({});
+        });
       });
 
       document.getElementById("btn-demo-auto").addEventListener("click", () => {
@@ -3714,27 +4276,33 @@
       });
 
       document.getElementById("btn-recon-clear").addEventListener("click", () => {
-        stopAutoDemo(true);
         state.demo.events = [];
         renderReconTable();
+        updatePhaseDock();
         setStatus("Tabla de reconciliación BB84 limpiada");
       });
 
       const viewportWrap = document.getElementById("viewport-wrap");
       if (viewportWrap && typeof ResizeObserver !== "undefined") {
-        new ResizeObserver(() => requestRender()).observe(viewportWrap);
+        new ResizeObserver(() => {
+          if (!userMovedCamera) resetToDefaultView(true);
+          requestRender();
+        }).observe(viewportWrap);
       }
 
-      window.addEventListener("resize", requestRender);
+      window.addEventListener("resize", () => {
+        if (!userMovedCamera) resetToDefaultView(true);
+        requestRender();
+      });
       window.addEventListener("keydown", (e) => {
         if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
-        if (e.key === "r" || e.key === "R") goToPreset("iso-ref");
+        if (e.key === "r" || e.key === "R") resetToDefaultView(false);
       });
     }
 
     function tick(now) {
-      let aliceFinishedOpts = null;
-      let bobFinishedOpts = null;
+      let aliceDoneCb = null;
+      let bobDoneCb = null;
 
       if (aliceMotorAnim) {
         const u = Math.min(1, (now - aliceMotorAnim.t0) / aliceMotorAnim.dur);
@@ -3744,7 +4312,7 @@
         needsRender = true;
         if (u >= 1) {
           state.aliceDeg = aliceMotorAnim.endDeg;
-          aliceFinishedOpts = aliceMotorAnim.options || {};
+          aliceDoneCb = aliceMotorAnim.onDone || null;
           aliceMotorAnim = null;
         }
       }
@@ -3757,17 +4325,13 @@
         needsRender = true;
         if (u >= 1) {
           state.bobDeg = bobMotorAnim.endDeg;
-          bobFinishedOpts = bobMotorAnim.options || {};
+          bobDoneCb = bobMotorAnim.onDone || null;
           bobMotorAnim = null;
         }
       }
 
-      if ((aliceFinishedOpts || bobFinishedOpts) && !aliceMotorAnim && !bobMotorAnim) {
-        const opts = (aliceFinishedOpts && !aliceFinishedOpts.skipLog)
-          ? aliceFinishedOpts
-          : (bobFinishedOpts || aliceFinishedOpts || {});
-        fireDemoLaserAndMeasure(opts);
-      }
+      if (aliceDoneCb) aliceDoneCb();
+      if (bobDoneCb) bobDoneCb();
 
       if (camAnim) {
         const u = Math.min(1, (now - camAnim.t0) / camAnim.dur);
@@ -3776,7 +4340,6 @@
         state.cam.az = s.az + (d.az - s.az) * e;
         state.cam.el = s.el + (d.el - s.el) * e;
         state.cam.dist = s.dist + (d.dist - s.dist) * e;
-        state.cam.orthoScale = s.orthoScale + (d.orthoScale - s.orthoScale) * e;
         state.cam.target = [
           s.target[0] + (d.target[0] - s.target[0]) * e,
           s.target[1] + (d.target[1] - s.target[1]) * e,
@@ -3798,7 +4361,8 @@
       getComponents: () => sceneComponents,
       getBeamSegments,
       applyTheme,
-      goToPreset,
+      resetToDefaultView,
+      goToPreset: () => resetToDefaultView(false),
       setDemoActive,
       triggerAliceButton,
       triggerBobButton,
@@ -3814,6 +4378,7 @@
       sceneComponents = buildSceneCatalog();
       initUI();
       setupCanvasInteraction();
+      resetToDefaultView(true);
       applyTheme("pencil");
       setDemoActive(true);
       startAutoDemo();
